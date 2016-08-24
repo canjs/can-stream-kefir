@@ -1,6 +1,6 @@
-import computeStream from 'can-compute-stream';
-import compute from 'can-compute';
-import QUnit from 'steal-qunit';
+var computeStream = require('can-compute-stream');
+var compute = require('can-compute');
+var QUnit = require('steal-qunit');
 
 QUnit.module('can-compute-stream');
 
@@ -40,7 +40,7 @@ test('Dependent compute streams do not bind to parent computes unless activated'
 	var c1 = compute(0);
 	var c2 = compute(0);
 
-	var resultCompute = computeStream(c1, c2, function (s1, s2) {
+	computeStream(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 

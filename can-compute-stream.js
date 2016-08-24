@@ -1,5 +1,5 @@
-import compute from 'can-compute';
-import Kefir from 'kefir';
+var compute = require('can-compute');
+var Kefir = require('kefir');
 
 function makeArray(arr) {
 	var ret = [];
@@ -60,4 +60,4 @@ computeStream.asCompute = function () {
 }
 
 
-export default computeStream;
+module.exports = computeStream;
