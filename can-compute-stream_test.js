@@ -23,7 +23,7 @@ test('Compute changes can be streamed', function () {
 	c(3);
 
 	QUnit.equal(computeVal, 3);
-})
+});
 
 test('Compute streams do not bind to the compute unless activated', function () {
 	var c = compute(0);
@@ -34,7 +34,7 @@ test('Compute streams do not bind to the compute unless activated', function () 
 	stream.onValue(function () {});
 
 	QUnit.equal(c.computeInstance._bindings, 1);
-})
+});
 
 test('Dependent compute streams do not bind to parent computes unless activated', function () {
 	var c1 = compute(0);
@@ -46,7 +46,7 @@ test('Dependent compute streams do not bind to parent computes unless activated'
 
 	QUnit.equal(c1._bindings, undefined);
 	QUnit.equal(c2._bindings, undefined);
-})
+});
 
 test('Compute stream values can be piped into a compute', function () {
 	var c1 = compute(0);
@@ -54,18 +54,18 @@ test('Compute stream values can be piped into a compute', function () {
 
 	var resultCompute = computeStream.asCompute(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
-	})
+	});
 
 	resultCompute.on('change', function () {});
 
-	QUnit.equal(resultCompute(), 0)
+	QUnit.equal(resultCompute(), 0);
 
-	c1(1)
-	QUnit.equal(resultCompute(), 1)
+	c1(1);
+	QUnit.equal(resultCompute(), 1);
 
-	c2(2)
-	QUnit.equal(resultCompute(), 2)
+	c2(2);
+	QUnit.equal(resultCompute(), 2);
 
 	c1(3);
-	QUnit.equal(resultCompute(), 3)
-})
+	QUnit.equal(resultCompute(), 3);
+});

@@ -20,9 +20,9 @@ var singleComputeToStream = function (compute) {
 
 		return function () {
 			compute.off('change', changeHandler);
-		}
+		};
 	});
-}
+};
 
 var computeStream = function () {
 	var computes = makeArray(arguments);
@@ -30,34 +30,30 @@ var computeStream = function () {
 
 	if (computes[computes.length - 1].hasOwnProperty('isComputed')) {
 		evaluator = function () {
-			return arguments.length > 1
-				? Kefir.merge(arguments)
-				: arguments[0];
-		}
+			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
+		};
 	} else {
 		evaluator = computes.pop();
 	}
 
-	var streams = computes.map(singleComputeToStream)
+	var streams = computes.map(singleComputeToStream);
 
 	return evaluator.apply(undefined, streams);
-}
+};
 
 computeStream.asCompute = function () {
 	var valueStream = computeStream.apply(undefined, arguments);
-	var computeUpdater;
 
 	var valueCompute = compute(undefined, {
 		on: function () {
-			valueStream.onValue(valueCompute)
+			valueStream.onValue(valueCompute);
 		},
 		off: function () {
-			valueStream.offValue(valueCompute)
+			valueStream.offValue(valueCompute);
 		}
 	});
 
 	return valueCompute;
-}
-
+};
 
 module.exports = computeStream;
