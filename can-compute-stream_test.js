@@ -69,3 +69,26 @@ test('Compute stream values can be piped into a compute', function () {
 	c1(3);
 	QUnit.equal(resultCompute(), 3);
 });
+
+test('Computed streams fire change events', function () {
+	var expected = 0;
+	var c1 = compute(expected);
+	var c2 = compute(expected);
+
+	var resultCompute = computeStream.asCompute(c1, c2, function (s1, s2) {
+		return s1.merge(s2);
+	});
+
+	resultCompute.on('change', function (ev, newVal) {
+		QUnit.equal(expected, newVal);
+	});
+
+	expected = 1;
+	c1(expected);
+
+	expected = 2;
+	c2(expected);
+
+	expected = 3;
+	c1(expected);
+});

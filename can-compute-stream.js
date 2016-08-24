@@ -43,13 +43,24 @@ var computeStream = function () {
 
 computeStream.asCompute = function () {
 	var valueStream = computeStream.apply(undefined, arguments);
+	var streamHandler, lastValue;
 
 	var valueCompute = compute(undefined, {
-		on: function () {
-			valueStream.onValue(valueCompute);
+		get: function () {
+			return lastValue;
+		},
+		set: function (val) {
+			return val;
+		},
+		on: function (updated) {
+			streamHandler = function (val) {
+				lastValue = val;
+				updated();
+			};
+			valueStream.onValue(streamHandler);
 		},
 		off: function () {
-			valueStream.offValue(valueCompute);
+			valueStream.offValue(streamHandler);
 		}
 	});
 
