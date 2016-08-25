@@ -68,7 +68,9 @@
       "ignore": "node_modules/**/*"
     },
     "readme": {
-      "apis": "./docs/apis.json"
+      "apis": [
+        "can-compute-stream"
+      ]
     },
     "parent": "can-compute-stream"
   }
