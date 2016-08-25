@@ -1,13 +1,9 @@
 var compute = require('can-compute');
+var define = require('can-define');
 var Kefir = require('kefir');
-
-function makeArray(arr) {
-	var ret = [];
-	for (var i = 0; i < arr.length; i++) {
-		ret[i] = arr[i];
-	}
-	return ret;
-}
+var makeArray = require("can-util/js/make-array/make-array");
+var isArray = require("can-util/js/is-array/is-array");
+var assign = require("can-util/js/assign/assign");
 
 var singleComputeToStream = function (compute) {
 	return Kefir.stream(function (emitter) {
@@ -65,6 +61,26 @@ computeStream.asCompute = function () {
 	});
 
 	return valueCompute;
+};
+
+define.behaviors.push('stream');
+
+var oldExtensions = define.extensions;
+
+define.extensions = function (objPrototype, prop, definition) {
+	if (isArray(definition.stream)) {
+		return assign({
+			value: function () {
+				var map = this;
+				var computes = definition.stream.map(function (prop) {
+					return compute(map, prop);
+				});
+				return computeStream.asCompute.apply(this, computes);
+			}
+		}, define.types.compute);
+	} else {
+		return oldExtensions.apply(this, arguments);
+	}
 };
 
 module.exports = computeStream;
