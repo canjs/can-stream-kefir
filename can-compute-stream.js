@@ -34,11 +34,11 @@ var computeStream = function () {
 
 	var streams = computes.map(singleComputeToStream);
 
-	return evaluator.apply(undefined, streams);
+	return evaluator.apply(this, streams);
 };
 
 computeStream.asCompute = function () {
-	var valueStream = computeStream.apply(undefined, arguments);
+	var valueStream = computeStream.apply(this, arguments);
 	var streamHandler, lastValue;
 
 	var valueCompute = compute(undefined, {
@@ -72,9 +72,10 @@ define.extensions = function (objPrototype, prop, definition) {
 		return assign({
 			value: function () {
 				var map = this;
-				var computes = definition.stream.map(function (prop) {
-					return compute(map, prop);
-				});
+				var computes = definition.stream
+					.map(function (arg) {
+						return typeof arg === 'string' ? compute(map, arg) : arg;
+					});
 				return computeStream.asCompute.apply(this, computes);
 			}
 		}, define.types.compute);
