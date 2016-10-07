@@ -5,18 +5,20 @@ var makeArray = require("can-util/js/make-array/make-array");
 
 // Pipes the value of a compute into a stream
 var singleComputeToStream = function (compute) {
-	return Kefir.stream(function (emitter) {
+	var stream = Kefir.stream(function (emitter) {
 		var changeHandler = function (ev, newVal) {
 			emitter.emit(newVal);
 		};
 
-		emitter.emit(compute());
 		compute.on('change', changeHandler);
+		emitter.emit(compute());
 
 		return function () {
 			compute.off('change', changeHandler);
 		};
 	});
+
+	return stream;
 };
 
 // Converts all arguments passed to streams, and resolves the resulting
@@ -38,7 +40,7 @@ var computeStream = function () {
 			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
 		};
 
-	// Assume the last argument is a method that will resolve all the 
+	// Assume the last argument is a method that will resolve all the
 	// passed stream into a single stream
 	} else {
 		evaluator = computes.pop();
@@ -47,11 +49,14 @@ var computeStream = function () {
 	// Converts each individual compute to a stream
 	var streams = computes.map(singleComputeToStream);
 
+	//TODO: we need to call the callback with the lastValue of the stream.
+	streams.unshift(undefined);
+
 	// Resolves all of the streams to a single stream
 	return evaluator.apply(this, streams);
 };
 
-// A variation of `computeStream`, but pipes the values of the 
+// A variation of `computeStream`, but pipes the values of the
 // resolved stream back into a compute
 computeStream.asCompute = function () {
 
@@ -92,30 +97,30 @@ computeStream.asCompute = function () {
 	return valueCompute;
 };
 
-	// computeStream.eventAsStream = function (map, property, eventName) {
-	// 	var lastValue, eventHandler;
+computeStream.eventAsStream = function (map, property, eventName) {
+	var lastValue, eventHandler;
 
-	// 	return compute(undefined, {
-	// 		// When the compute is read, use that last value
-	// 		get: function () {
-	// 			return lastValue;
-	// 		},
-	// 		set: function (val) {
-	// 			return val;
-	// 		},
+	return compute(undefined, {
+		// When the compute is read, use that last value
+		get: function () {
+			return lastValue;
+		},
+		set: function (val) {
+			return val;
+		},
 
-	// 		on: function (updated) {
-	// 			eventHandler = function (val) {
-	// 				lastValue = val;
-	// 				updated();
-	// 			};
-	// 			map.bind(eventName, eventHandler)
-	// 		},
-	// 		off: function () {
-	// 			map.unbind((eventName, eventHandler);
-	// 		}
-	// 	})
-	// }
+		on: function (updated) {
+			eventHandler = function (val) {
+				lastValue = val;
+				updated();
+			};
+			map[property].bind(eventName, eventHandler);
+		},
+		off: function () {
+			map[property].unbind((eventName, eventHandler));
+		}
+	});
+};
 
 
 module.exports = computeStream;
