@@ -108,7 +108,7 @@ test('Event streams fire change events', function () {
 	});
 	var map = new MyMap();
 
-	var stream = computeStream.eventAsStream(map, 'fooList', 'length');
+	var stream = computeStream.eventAsCompute(map, 'fooList', 'length');
 
 	stream.on('change', function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
@@ -145,10 +145,9 @@ test('Event streams fire change events piped into a compute', function () {
 		QUnit.equal(expected, newVal);
 	});
 
-	var stream = computeStream.eventAsStream(map, 'fooList', 'length');
+	var stream = computeStream.eventAsCompute(map, 'fooList', 'length');
 	//
 	stream.on('change', function(ev){
-		c1(map.fooList.length); //update the compute
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
 	});
 
@@ -171,14 +170,19 @@ test('Event stream inside definemap', function() {
 
 	var MyMap = DefineMap.extend({
 		foo: 'number',
+		foo2: {
+			type: 'number',
+			value: 2
+		},
 		fooList: {
 			Type: DefineList.List,
 			value: []
 		},
 		fooStream: {
-			stream: ["fooList length", function(s1) {
-				return s1;
-			}]
+			stream: ["fooList length"]
+		},
+		fooStream2: {
+			stream: ["foo", "foo2"]
 		}
 	});
 
@@ -187,6 +191,13 @@ test('Event stream inside definemap', function() {
 	map.on('fooStream', function(){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
 	});
+
+	map.on('fooStream2', function(ev, newVal, lastVal) {
+		QUnit.equal(newVal, expected, 'fooStream2 updated');
+	});
+
+	expected = 1;
+	map.foo = 1;
 
 	expected = 1;
 	map.fooList.push(1);

@@ -7,7 +7,7 @@ var define = require('can-define');
 
 // Pipes the value of a compute into a stream
 var singleComputeToStream = function (compute) {
-	var stream = Kefir.stream(function (emitter) {
+	return Kefir.stream(function (emitter) {
 		var changeHandler = function (ev, newVal) {
 			emitter.emit(newVal);
 		};
@@ -19,8 +19,6 @@ var singleComputeToStream = function (compute) {
 			compute.off('change', changeHandler);
 		};
 	});
-
-	return stream;
 };
 
 // Converts all arguments passed to streams, and resolves the resulting
@@ -49,7 +47,7 @@ var computeStream = function () {
 
 	// Converts each individual compute to a stream
 	var streams = computes.map(singleComputeToStream);
-
+	//streams.push(Kefir.merge(computes));
 	// Resolves all of the streams to a single stream
 	return evaluator.apply(this, streams);
 };
@@ -95,7 +93,7 @@ computeStream.asCompute = function () {
 	return valueCompute;
 };
 
-computeStream.eventAsStream = function (map, property, eventName) {
+computeStream.eventAsCompute = function (map, property, eventName) {
 	var lastValue, eventHandler;
 
 	return compute(undefined, {
@@ -133,14 +131,13 @@ define.extensions = function (objPrototype, prop, definition) {
 					.map(function (arg) {
 						if(typeof arg === 'string') {
 							if(arg.indexOf(" ") !== -1) {
-								return computeStream.eventAsStream(map, arg.split(" ")[0], arg.split(" ")[1]);
+								return computeStream.eventAsCompute(map, arg.split(" ")[0], arg.split(" ")[1]);
 							}
 							return compute(map, arg);
 						}
 						else {
 							return arg;
 						}
-						// return typeof arg === 'string' ? compute(map, arg.split(" ")[0], arg.split(" ")[1]) : arg;
 					});
 				return computeStream.asCompute.apply(this, computes);
 			}
