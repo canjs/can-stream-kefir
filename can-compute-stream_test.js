@@ -3,7 +3,8 @@ var computeStream = require('can-compute-stream');
 var compute = require('can-compute');
 var DefineMap = require('can-define/map/map');
 var DefineList = require('can-define/list/list');
-var Kefir = require('kefir');
+
+
 QUnit.module('can-compute-stream');
 
 
@@ -78,7 +79,7 @@ test('Computed streams fire change events', function () {
 	var c1 = compute(expected);
 	var c2 = compute(expected);
 
-	var resultCompute = computeStream.asCompute(c1, c2, function (lastValue, s1, s2) {
+	var resultCompute = computeStream.asCompute(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
@@ -121,7 +122,6 @@ test('Event streams fire change events', function () {
 
 });
 
-
 test('Event streams fire change events piped into a compute', function () {
 	var expected = 0;
 
@@ -137,7 +137,7 @@ test('Event streams fire change events piped into a compute', function () {
 	var c1 = compute(map.fooList.length);
 	var c2 = compute(expected);
 
-	var resultCompute = computeStream.asCompute(c1, c2, function (lastValue, s1, s2) {
+	var resultCompute = computeStream.asCompute(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
@@ -154,6 +154,38 @@ test('Event streams fire change events piped into a compute', function () {
 
 	resultCompute.on('change', function(ev, newVal){
 		QUnit.equal(newVal, expected, 'compute was updated properly');
+	});
+
+	expected = 1;
+	map.fooList.push(1);
+
+	expected = 0;
+	map.fooList.pop();
+
+});
+
+
+test('Event stream inside definemap', function() {
+
+	var expected = 0;
+
+	var MyMap = DefineMap.extend({
+		foo: 'number',
+		fooList: {
+			Type: DefineList.List,
+			value: []
+		},
+		fooStream: {
+			stream: ["fooList length", function(s1) {
+				return s1;
+			}]
+		}
+	});
+
+	var map = new MyMap();
+
+	map.on('fooStream', function(){
+		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
 	});
 
 	expected = 1;

@@ -1,7 +1,9 @@
 var compute = require('can-compute');
 var Kefir = require('kefir');
 var makeArray = require("can-util/js/make-array/make-array");
-
+var isArray = require("can-util/js/is-array/is-array");
+var assign = require("can-util/js/assign/assign");
+var define = require('can-define');
 
 // Pipes the value of a compute into a stream
 var singleComputeToStream = function (compute) {
@@ -35,7 +37,6 @@ var computeStream = function () {
 
 		// Function will  be passed all resulting streams
 		evaluator = function () {
-
 			// If many streams are passed, merge them; Otherwise return the solo stream
 			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
 		};
@@ -48,9 +49,6 @@ var computeStream = function () {
 
 	// Converts each individual compute to a stream
 	var streams = computes.map(singleComputeToStream);
-
-	//TODO: we need to call the callback with the lastValue of the stream.
-	streams.unshift(undefined);
 
 	// Resolves all of the streams to a single stream
 	return evaluator.apply(this, streams);
@@ -120,6 +118,36 @@ computeStream.eventAsStream = function (map, property, eventName) {
 			map[property].unbind((eventName, eventHandler));
 		}
 	});
+};
+
+
+define.behaviors.push('stream');
+
+var oldExtensions = define.extensions;
+define.extensions = function (objPrototype, prop, definition) {
+	if (isArray(definition.stream)) {
+		return assign({
+			value: function () {
+				var map = this;
+				var computes = definition.stream
+					.map(function (arg) {
+						if(typeof arg === 'string') {
+							if(arg.indexOf(" ") !== -1) {
+								return computeStream.eventAsStream(map, arg.split(" ")[0], arg.split(" ")[1]);
+							}
+							return compute(map, arg);
+						}
+						else {
+							return arg;
+						}
+						// return typeof arg === 'string' ? compute(map, arg.split(" ")[0], arg.split(" ")[1]) : arg;
+					});
+				return computeStream.asCompute.apply(this, computes);
+			}
+		}, define.types.compute);
+	} else {
+		return oldExtensions.apply(this, arguments);
+	}
 };
 
 
