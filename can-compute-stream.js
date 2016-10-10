@@ -93,11 +93,27 @@ computeStream.asCompute = function () {
 	return valueCompute;
 };
 
-computeStream.eventAsCompute = function (map, property, eventName) {
+
+computeStream.toStreamFromCompute = function() {
+	//returns a stream from one or more computes
+	return computeStream.apply(this, arguments);
+};
+
+computeStream.toStreamFromProperty = function(obs, propName ) {
+	var compute = compute(obs, propName);
+	return computeStream.apply(this, compute);
+};
+
+computeStream.toStreamFromEvent = function(obs, eventName) {
+	var compute = compute(obs, eventName);
+	return computeStream.apply(this, compute);
+};
+
+computeStream.toStreamFromEvent = function(obs, propName, eventName) {
 	var lastValue, eventHandler;
 
-	return compute(undefined, {
-		// When the compute is read, use that last value
+	var localCompute = compute(undefined, {
+
 		get: function () {
 			return lastValue;
 		},
@@ -110,12 +126,14 @@ computeStream.eventAsCompute = function (map, property, eventName) {
 				lastValue = val;
 				updated();
 			};
-			map[property].bind(eventName, eventHandler);
+			obs[propName].bind(eventName, eventHandler);
 		},
 		off: function () {
-			map[property].unbind((eventName, eventHandler));
+			obs[propName].unbind((eventName, eventHandler));
 		}
 	});
+
+	return computeStream(localCompute);
 };
 
 
@@ -131,7 +149,7 @@ define.extensions = function (objPrototype, prop, definition) {
 					.map(function (arg) {
 						if(typeof arg === 'string') {
 							if(arg.indexOf(" ") !== -1) {
-								return computeStream.eventAsCompute(map, arg.split(" ")[0], arg.split(" ")[1]);
+								return computeStream.toStreamFromEvent(map, arg.split(" ")[0], arg.split(" ")[1]);
 							}
 							return compute(map, arg);
 						}

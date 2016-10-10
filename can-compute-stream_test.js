@@ -10,7 +10,7 @@ QUnit.module('can-compute-stream');
 
 test('Compute changes can be streamed', function () {
 	var c = compute(0);
-	var stream = computeStream(c);
+	var stream = computeStream.toStreamFromCompute(c);
 	var computeVal;
 
 	stream.onValue(function (newVal) {
@@ -31,7 +31,7 @@ test('Compute changes can be streamed', function () {
 
 test('Compute streams do not bind to the compute unless activated', function () {
 	var c = compute(0);
-	var stream = computeStream(c);
+	var stream = computeStream.toStreamFromCompute(c);
 
 	QUnit.equal(c.computeInstance._bindings, undefined);
 
@@ -44,7 +44,7 @@ test('Dependent compute streams do not bind to parent computes unless activated'
 	var c1 = compute(0);
 	var c2 = compute(0);
 
-	computeStream(c1, c2, function (s1, s2) {
+	var stream = computeStream.toStreamFromCompute(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
@@ -108,9 +108,9 @@ test('Event streams fire change events', function () {
 	});
 	var map = new MyMap();
 
-	var stream = computeStream.eventAsCompute(map, 'fooList', 'length');
+	var stream = computeStream.toStreamFromEvent(map, 'fooList', 'length');
 
-	stream.on('change', function(ev){
+	stream.onValue(function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
 	});
 
@@ -145,9 +145,9 @@ test('Event streams fire change events piped into a compute', function () {
 		QUnit.equal(expected, newVal);
 	});
 
-	var stream = computeStream.eventAsCompute(map, 'fooList', 'length');
+	var stream = computeStream.toStreamFromEvent(map, 'fooList', 'length');
 	//
-	stream.on('change', function(ev){
+	stream.onValue(function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
 	});
 
