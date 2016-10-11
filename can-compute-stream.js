@@ -109,10 +109,9 @@ computeStream.toStreamFromEvent = function(obs, eventName) {
 	return computeStream.apply(this, compute);
 };
 
-computeStream.toStreamFromEvent = function(obs, propName, eventName) {
+computeStream.toComputeFromEvent = function(obs, propName, eventName) {
 	var lastValue, eventHandler;
-
-	var localCompute = compute(undefined, {
+	return compute(undefined, {
 
 		get: function () {
 			return lastValue;
@@ -132,7 +131,10 @@ computeStream.toStreamFromEvent = function(obs, propName, eventName) {
 			obs[propName].unbind((eventName, eventHandler));
 		}
 	});
+};
 
+computeStream.toStreamFromEvent = function(obs, propName, eventName) {
+	var localCompute = computeStream.toComputeFromEvent(obs, propName, eventName);
 	return computeStream(localCompute);
 };
 
@@ -149,7 +151,7 @@ define.extensions = function (objPrototype, prop, definition) {
 					.map(function (arg) {
 						if(typeof arg === 'string') {
 							if(arg.indexOf(" ") !== -1) {
-								return computeStream.toStreamFromEvent(map, arg.split(" ")[0], arg.split(" ")[1]);
+								return computeStream.toComputeFromEvent(map, arg.split(" ")[0], arg.split(" ")[1]);
 							}
 							return compute(map, arg);
 						}
