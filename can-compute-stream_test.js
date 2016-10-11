@@ -79,11 +79,11 @@ test('Computed streams fire change events', function () {
 	var c1 = compute(expected);
 	var c2 = compute(expected);
 
-	var resultCompute = computeStream.asCompute(c1, c2, function (s1, s2) {
+	var resultCompute = computeStream.toStreamFromCompute(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
-	resultCompute.on('change', function (ev, newVal) {
+	resultCompute.onValue(function (newVal) {
 		QUnit.equal(expected, newVal);
 	});
 
