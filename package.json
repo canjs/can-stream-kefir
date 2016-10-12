@@ -38,6 +38,8 @@
   "dependencies": {
     "can-compute": "3.0.0-pre.11",
     "can-define": "^0.8.2",
+    "can-event": "^3.0.0-pre.16",
+    "can-observation": "^3.0.0-pre.13",
     "can-util": "^3.0.0-pre.34",
     "kefir": "^3.4.0"
   },
