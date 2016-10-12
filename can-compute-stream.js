@@ -61,8 +61,12 @@ computeStream.toStreamFromEvent = function() {
 	var obs = arguments[0];
 	var eventName, propName;
 
+
 	if(arguments.length === 2) {
+		//.toStreamFromEvent(obs, event);
+
 		eventName = arguments[1];
+		
         return Kefir.stream(function (emitter) {
 			var handler = function(ev){
                 var clone = assign({}, ev);
@@ -71,12 +75,13 @@ computeStream.toStreamFromEvent = function() {
             };
 
 			canEvent.addEventListener.call(obs, eventName, handler);
-            return function(){
+
+			return function(){
 				canEvent.removeEventListener.call(obs, eventName, handler);
             };
         });
     } else {
-
+		//.toStreamFromEvent(obs, propName, event);
 		propName = arguments[1];
 		eventName = arguments[2];
 

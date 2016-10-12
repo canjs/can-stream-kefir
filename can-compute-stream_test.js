@@ -172,7 +172,7 @@ test('Event streams fire change events', function () {
 	});
 	var map = new MyMap();
 
-	var stream = computeStream.toStreamFromEvent(map, 'fooList', 'length');
+	var stream = computeStream.toStreamFromEvent(map.fooList, 'length');
 
 	stream.onValue(function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
@@ -186,23 +186,26 @@ test('Event streams fire change events', function () {
 
 });
 
-test('Detect nested property is updated using toStreamFromEvent', function() {
+test('Convert an observable nested property into an event stream #2b', function() {
 	var expected = 1;
-	var obj = {
+	var MyMap = DefineMap.extend({
 		foo: {
-			bar: 1
+			value: {
+				bar: {
+					value: 1
+				}
+			}
 		}
-	};
+	});
+	var obs = new MyMap();
 
-	var stream = computeStream.toStreamFromEvent(obj, "changed");
+	var stream = computeStream.toStreamFromEvent(obs.foo, "bar");
 
-	stream.onValue(function(val) {
-		debugger;
-		QUnit.equal(expected, val);
+	stream.onValue(function(ev) {
+		QUnit.equal(expected, ev.target.bar);
 	});
 
 	expected = 2;
-	obj.foo.bar = 2;
-
+	obs.foo.bar = 2;
 
 });
