@@ -31,7 +31,7 @@ test('Compute changes can be streamed', function () {
 
 	QUnit.equal(computeVal, 3);
 });
-/*
+
 test('Compute streams do not bind to the compute unless activated', function () {
 	var c = compute(0);
 	var stream = computeStream.toStreamFromCompute(c);
@@ -54,33 +54,32 @@ test('Dependent compute streams do not bind to parent computes unless activated'
 	QUnit.equal(c1._bindings, undefined);
 	QUnit.equal(c2._bindings, undefined);
 });
-*/
-//
-// test('Compute stream values can be piped into a compute', function () {
-// 	var c1 = compute(0);
-// 	var c2 = compute(0);
-//
-// 	var resultCompute = computeStream.toStream(c1, c2, function (s1, s2) {
-// 		return s1.merge(s2);
-// 	});
-//
-// 	resultCompute.onValue(function () {
-//
-// 	});
-//
-// 	// QUnit.equal(resultCompute, 0);
-// 	//
-// 	// c1(1);
-// 	// QUnit.equal(resultCompute(), 1);
-// 	//
-// 	// c2(2);
-// 	// QUnit.equal(resultCompute(), 2);
-// 	//
-// 	// c1(3);
-// 	// QUnit.equal(resultCompute(), 3);
-// });
 
-/*
+
+test('Compute stream values can be piped into a compute', function () {
+	var expected = 0;
+	var c1 = compute(0);
+	var c2 = compute(0);
+
+	var resultCompute = computeStream.toStreamFromCompute(c1, c2, function (s1, s2) {
+		return s1.merge(s2);
+	});
+
+	resultCompute.onValue(function (val) {
+		QUnit.equal(val, expected);
+	});
+
+	expected = 1;
+	c1(1);
+
+	expected = 2;
+	c2(2);
+
+	expected = 3;
+	c1(3);
+});
+
+
 
 test('Computed streams fire change events', function () {
 	var expected = 0;
@@ -104,7 +103,7 @@ test('Computed streams fire change events', function () {
 	expected = 3;
 	c1(expected);
 });
-*/
+
 
 test('Stream on a property val - toStreamFromEvent', function(){
 	var expected = "bar";
@@ -139,6 +138,28 @@ test('Stream on a property val - toStreamFromProperty', function(){
 
 });
 
+test('Multiple streams piped into single stream - toStreamFromProperty', function(){
+	var expected = "bar";
+	var map = {
+		foo: "bar",
+		foo2: "bar"
+	};
+	var stream1 = computeStream.toStreamFromProperty(map, 'foo');
+	var stream2 = computeStream.toStreamFromProperty(map, 'foo2');
+
+	var singleStream = computeStream.toSingleStream(stream1, stream2);
+
+	singleStream.onValue(function(ev){
+		QUnit.equal(ev, expected);
+	});
+
+	expected = "foobar";
+	map.foo = "foobar";
+
+	expected = "foobar2";
+	map.foo2 = "foobar2";
+
+});
 
 
 test('Event streams fire change events', function () {
@@ -165,7 +186,8 @@ test('Event streams fire change events', function () {
 
 });
 
-test('Detect when toStreamFromEvent test', function() {
+test('Detect nested property is updated using toStreamFromEvent', function() {
+	var expected = 1;
 	var obj = {
 		foo: {
 			bar: 1
@@ -174,11 +196,13 @@ test('Detect when toStreamFromEvent test', function() {
 
 	var stream = computeStream.toStreamFromEvent(obj, "changed");
 
-	stream.onValue(function(previousVal) {
+	stream.onValue(function(val) {
 		debugger;
+		QUnit.equal(expected, val);
 	});
 
+	expected = 2;
 	obj.foo.bar = 2;
 
-	QUnit.equal(obj.foo.bar, 2);
+
 });

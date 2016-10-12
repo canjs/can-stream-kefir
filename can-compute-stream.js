@@ -3,10 +3,14 @@ var Kefir = require('kefir');
 var makeArray = require("can-util/js/make-array/make-array");
 var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
-var Observation = require('can-observation');
 
-// Pipes the value of a compute into a stream
-var singleComputeToStream = function (compute) {
+
+var computeStream = {};
+
+/*
+ * Pipes the value of a compute into a stream
+ */
+computeStream.singleComputeToStream = function (compute) {
 	return Kefir.stream(function (emitter) {
 		var changeHandler = function (ev, newVal) {
 			emitter.emit(newVal);
@@ -22,54 +26,43 @@ var singleComputeToStream = function (compute) {
 };
 
 
-var computeStream = {};
-
-// Converts all arguments passed to streams, and resolves the resulting
-// streams to a single stream
-//   Assumes all arguments are computes
-//   Last argument is optionally a function
-//we would probably want a better name, but for now this is a placeholder
-computeStream.toStream = function () {
+/*
+ * Converts all arguments passed into a single stream and resolves the resulting
+ * streams into a single stream. Assumes all arguments are computes and last
+ * argument is optionally a function.
+ */
+computeStream.toStreamFromCompute = function () {
 	var computes = makeArray(arguments);
 	var evaluator;
 
-	// If the last argument is a compute, merge the streams by default
-	// Assume if last argument is a compute all arguments are computes
 	if (computes[computes.length - 1].hasOwnProperty('isComputed')) {
-
-		// Function will  be passed all resulting streams
 		evaluator = function () {
-			// If many streams are passed, merge them; Otherwise return the solo stream
 			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
 		};
-
-	// Assume the last argument is a method that will resolve all the
-	// passed stream into a single stream
 	} else {
 		evaluator = computes.pop();
 	}
 
-	// Converts each individual compute to a stream
-	var streams = computes.map(singleComputeToStream);
-
-	// Resolves all of the streams to a single stream
+	var streams = computes.map(computeStream.singleComputeToStream);
 	return evaluator.apply(this, streams);
 };
 
-
-computeStream.toStreamFromCompute = function() {
-	//returns a stream from one or more computes
-	return computeStream.toStream.apply(this, arguments);
-};
-
+/*
+ * Returns a single stream for a property on an {observable}
+ */
 computeStream.toStreamFromProperty = function( obs, propName ) {
 	return computeStream.toStreamFromCompute(compute(obs, propName));
 };
 
+/*
+ * Returns a single stream for a specific event on an {observable} property
+ */
 computeStream.toStreamFromEvent = function() {
 	var obs = arguments[0];
+	var eventName, propName;
+
 	if(arguments.length === 2) {
-		var eventName = arguments[1];
+		eventName = arguments[1];
         return Kefir.stream(function (emitter) {
 			var handler = function(ev){
                 var clone = assign({}, ev);
@@ -83,8 +76,10 @@ computeStream.toStreamFromEvent = function() {
             };
         });
     } else {
-		var propName = arguments[1];
-		var eventName = arguments[2];
+
+		propName = arguments[1];
+		eventName = arguments[2];
+
 		var propValueStream = computeStream.toStreamFromProperty(obs, propName);
 
 		return Kefir.stream(function (emitter) {
@@ -115,34 +110,11 @@ computeStream.toStreamFromEvent = function() {
     }
 };
 
-computeStream.toComputeFromEvent = function(obs, propName, eventName) {
-	var lastValue, eventHandler;
-	return compute(undefined, {
-
-		get: function () {
-			return lastValue;
-		},
-		set: function (val) {
-			return val;
-		},
-
-		on: function (updated) {
-			eventHandler = function (val) {
-				lastValue = val;
-				updated();
-			};
-			obs[propName].bind(eventName, eventHandler);
-		},
-		off: function () {
-			obs[propName].unbind((eventName, eventHandler));
-		}
-	});
+/*
+ * Takes multiple streams and returns a single stream
+ */
+computeStream.toSingleStream = function() {
+	return Kefir.merge(arguments);
 };
-
-// computeStream.toStreamFromEvent = function(obs, propName, eventName) {
-// 	var localCompute = computeStream.toComputeFromEvent(obs, propName, eventName);
-// 	return computeStream.toStream(localCompute);
-// };
-
 
 module.exports = computeStream;
