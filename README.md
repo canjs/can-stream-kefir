@@ -38,5 +38,3 @@ __returns__ `{can-stream}` A steam that's value is the last event object dispatc
 - __stream__ `{can-stream}` - one or more stream
 
 __returns__ `{can-stream}` Returns a single stream from the other stream.
-
-## stream -> compute?
