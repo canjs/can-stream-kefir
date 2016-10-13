@@ -35,7 +35,7 @@ computeStream.toStreamFromCompute = function () {
 	var computes = makeArray(arguments);
 	var evaluator;
 
-	if (computes[computes.length - 1].hasOwnProperty('isComputed')) {
+	if (computes[computes.length - 1].isComputed) {
 		evaluator = function () {
 			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
 		};
@@ -64,9 +64,7 @@ computeStream.toStreamFromEvent = function() {
 
 	if(arguments.length === 2) {
 		//.toStreamFromEvent(obs, event);
-
 		eventName = arguments[1];
-		
         return Kefir.stream(function (emitter) {
 			var handler = function(ev){
                 var clone = assign({}, ev);
