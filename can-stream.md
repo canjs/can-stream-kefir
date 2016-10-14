@@ -13,19 +13,19 @@ Convert one or more [can-compute]s into a stream. If `evaluator` is not provided
 Convert one compute into a stream:
 
 ```js
-canStream(compute1);
+canStream.toStreamFromCompute(compute1);
 ```
 
 Convert multiple computes into a stream (using the default [merge](https://rpominov.github.io/kefir/#merge) evaluator):
 
 ```js
-canStream(compute1, compute2);
+canStream.toStreamFromCompute(compute1, compute2);
 ```
 
 Convert multiple computes into a stream with a custom evaluator:
 
 ```js
-canStream(compute1, compute2, function(stream1, stream2) {});
+canStream.toStreamFromCompute(compute1, compute2, function(stream1, stream2) {});
 ```
 
   @param {can-compute} computes One or more instances of [can-compute].
@@ -33,14 +33,34 @@ canStream(compute1, compute2, function(stream1, stream2) {});
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.asCompute(…computes[, evaluator])`
+@signature `canStream.toStreamFromProperty(obs, propName)`
 
-The same as `canStream(…computes[, evaluator])` except a [can-compute] is returned instead of a stream.
+Creates a stream based on property value change on observable
 
-  @param {can-compute} computes One or more instances of [can-compute].
-  @param {Function} evaluator A function that’s called with each of the computes converted into a stream.
+  @param {observable} An observable object
+  @param {string} property name
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
+
+@signature `canStream.toStreamFromEvent(obs, propName)`
+
+Creates a stream based on property value change on observable
+
+  @param {observable} An observable object
+  @par am {string} property name
+
+  @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
+
+@signature `canStream.toStreamFromEvent(obs, eventName)`
+
+  Creates a stream based on event on observable
+
+    @param {observable} An observable object
+    @par am {string} event name
+
+    @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
+
+
 
 @body
 
