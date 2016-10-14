@@ -5,12 +5,12 @@ var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
 
 
-var computeStream = {};
+var canStream = {};
 
 /*
  * Pipes the value of a compute into a stream
  */
-computeStream.singleComputeToStream = function (compute) {
+canStream.singleComputeToStream = function (compute) {
 	return Kefir.stream(function (emitter) {
 		var changeHandler = function (ev, newVal) {
 			emitter.emit(newVal);
@@ -31,7 +31,7 @@ computeStream.singleComputeToStream = function (compute) {
  * streams into a single stream. Assumes all arguments are computes and last
  * argument is optionally a function.
  */
-computeStream.toStreamFromCompute = function () {
+canStream.toStreamFromCompute = function () {
 	var computes = makeArray(arguments);
 	var evaluator;
 
@@ -43,21 +43,21 @@ computeStream.toStreamFromCompute = function () {
 		evaluator = computes.pop();
 	}
 
-	var streams = computes.map(computeStream.singleComputeToStream);
+	var streams = computes.map(canStream.singleComputeToStream);
 	return evaluator.apply(this, streams);
 };
 
 /*
  * Returns a single stream for a property on an {observable}
  */
-computeStream.toStreamFromProperty = function( obs, propName ) {
-	return computeStream.toStreamFromCompute(compute(obs, propName));
+canStream.toStreamFromProperty = function( obs, propName ) {
+	return canStream.toStreamFromCompute(compute(obs, propName));
 };
 
 /*
  * Returns a single stream for a specific event on an {observable} property
  */
-computeStream.toStreamFromEvent = function() {
+canStream.toStreamFromEvent = function() {
 	var obs = arguments[0];
 	var eventName, propName;
 
@@ -83,7 +83,7 @@ computeStream.toStreamFromEvent = function() {
 		propName = arguments[1];
 		eventName = arguments[2];
 
-		var propValueStream = computeStream.toStreamFromProperty(obs, propName);
+		var propValueStream = canStream.toStreamFromProperty(obs, propName);
 
 		return Kefir.stream(function (emitter) {
             var handler = function(ev){
@@ -116,8 +116,8 @@ computeStream.toStreamFromEvent = function() {
 /*
  * Takes multiple streams and returns a single stream
  */
-computeStream.toSingleStream = function() {
+canStream.toSingleStream = function() {
 	return Kefir.merge(arguments);
 };
 
-module.exports = computeStream;
+module.exports = canStream;
