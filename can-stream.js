@@ -17,6 +17,7 @@ canStream.singleComputeToStream = function (compute) {
 		};
 
 		compute.on('change', changeHandler);
+
 		emitter.emit(compute());
 
 		return function () {
@@ -118,6 +119,41 @@ canStream.toStreamFromEvent = function() {
  */
 canStream.toSingleStream = function() {
 	return Kefir.merge(arguments);
+};
+
+canStream.toStream = function() {
+	//handle cases:
+	// computeStream.toStream(compute)  //#1
+	// computeStream.toStream(obj, ".tasks") //#2a
+	// computeStream.toStream(obj, ".foo.bar") //#2b
+	// computeStream.toStream( obj, "close") //#3a
+	// computeStream.toStream(obj, ".tasks add") //#3b
+	// computeStream.toStream(obj, ".person.tasks add") //#3b
+
+	if(arguments.length === 1) {
+		//we expect it to be a compute:
+		return canStream.toStreamFromCompute(arguments[0]); //#1
+	}
+	else if(arguments.length > 1) {
+		var obs = arguments[0];
+		var eventNameOrPropName = arguments[1].trim();
+
+		if(eventNameOrPropName.indexOf(" ") === -1) {
+			//no space found (so addressing the first three)
+			if(eventNameOrPropName.indexOf(".") === 0) {
+				//starts with a dot
+				return canStream.toStreamFromProperty(obs, eventNameOrPropName.slice(1)); //#2a
+			}
+			else {
+				return canStream.toStreamFromEvent(obs, eventNameOrPropName); //#3a
+			}
+		}
+		else {
+			var splitEventNameAndProperty = eventNameOrPropName.split(" ");
+			return canStream.toStreamFromEvent(obs, splitEventNameAndProperty[0].slice(1), splitEventNameAndProperty[1]);  //#3b
+		}
+	}
+	return false; //we reached the end for some reason without creating any stream.
 };
 
 module.exports = canStream;

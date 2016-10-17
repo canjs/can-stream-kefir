@@ -51,16 +51,25 @@ Creates a stream based on property value change on observable
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.toStreamFromEvent(obs, eventName)`
+@signature `canStream.toStreamFromEvent(obs, propName, eventName)`
 
   Creates a stream based on event on observable
 
     @param {observable} An observable object
-    @par am {string} event name
+    @param {string} property name
+    @param {string} event name
 
     @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
 
+@signature `canStream.toStream(obs [, propName])`
+
+    Creates a stream from an observable
+
+    @param {observable} An observable object
+    @param {string} An observable property or an event or both (see usage below)
+
+    @return {String} a [Kefir](https://rpominov.github.io/kefir/) stream.
 
 @body
 
@@ -77,4 +86,19 @@ var streamListener = function() {};
 stream.onValue(streamListener);
 
 compute(1);// streamListener gets called with 1 (the updated value)
+```
+
+
+```js
+var MyMap = DefineMap.extend({
+    tasks: {
+        Type: DefineList.List,
+        value: []
+    }
+});
+var map = new MyMap();
+
+var stream = canStream.toStream(map.tasks, 'length');
+var stream = canStream.toStream(map, '.tasks');
+var stream = canStream.toStream(map, '.tasks length');
 ```
