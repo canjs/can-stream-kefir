@@ -1,40 +1,104 @@
-# can-stream
+@module {Function} can-stream
+@parent can-ecosystem
 
-[![Build Status](https://travis-ci.org/canjs/can-stream.png?branch=master)](https://travis-ci.org/canjs/can-stream)
+Convert one or more [can-compute]s into a stream, multiple computes into a single compute, or
+multiple computes into a single stream. [Kefir](https://rpominov.github.io/kefir/) is used internally
+to provide the stream functionality.
 
-## API
+@signature `canStream(…computes[, evaluator])`
 
-## .toStreamFromCompute([compute...], toValueStream([valueStream...))
+Convert one or more [can-compute]s into a stream. If `evaluator` is not provided,
+[Kefir’s merge method](https://rpominov.github.io/kefir/#merge) will be used to combine the streams.
 
-- __compute__ `{can-compute}` - one or more computes
-- __toValueStream__ `{function(stream+):stream}` Takes streams derived from the `compute` arguments and returns a stream whose value will update the compute.
+Convert one compute into a stream:
 
-__returns__ `{can-compute}` A compute that changes with the result of __toValueStream__.
+```js
+canStream.toStreamFromCompute(compute1);
+```
 
-## .toStreamFromProperty(observable, property)
+Convert multiple computes into a stream (using the default [merge](https://rpominov.github.io/kefir/#merge) evaluator):
 
-- __observable__ `{*}`
-- __property__ `{String}`
+```js
+canStream.toStreamFromCompute(compute1, compute2);
+```
 
-__returns__ `{can-stream}` A stream that's value is the last event object dispatched on property change.
+Convert multiple computes into a stream with a custom evaluator:
 
-## .toStreamFromEvent(observable, eventName)
+```js
+canStream.toStreamFromCompute(compute1, compute2, function(stream1, stream2) {});
+```
 
-- __observable__ `{*}`
-- __eventName__ `{String}`
+  @param {can-compute} computes One or more instances of [can-compute].
+  @param {Function} evaluator A function that’s called with each of the computes converted into a stream.
 
-__returns__ `{can-stream}` A stream that's value is the last event object dispatched as `eventName`.
+  @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-## .toStreamFromEvent(observable, property, eventName)
+@signature `canStream.toStreamFromProperty(obs, propName)`
 
-- __observable__ `{*}`
-- __property__ `{String}`
-- __eventName__ `{String}`
+Creates a stream based on property value change on observable
 
-__returns__ `{can-stream}` A steam that's value is the last event object dispatched as `eventName` on property change.
+  @param {observable} An observable object
+  @param {string} property name
 
-## .toSingleStream([stream...])
+  @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-- __stream__ `{can-stream}` - one or more stream
+@signature `canStream.toStreamFromEvent(obs, propName)`
 
-__returns__ `{can-stream}` Returns a single stream from the other stream.
+Creates a stream based on property value change on observable
+
+  @param {observable} An observable object
+  @par am {string} property name
+
+  @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
+
+@signature `canStream.toStreamFromEvent(obs, propName, eventName)`
+
+  Creates a stream based on event on observable
+
+    @param {observable} An observable object
+    @param {string} property name
+    @param {string} event name
+
+    @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
+
+
+@signature `canStream.toStream(obs [, propName])`
+
+    Creates a stream from an observable
+
+    @param {observable} An observable object
+    @param {string} An observable property or an event or both (see usage below)
+
+    @return {String} a [Kefir](https://rpominov.github.io/kefir/) stream.
+
+@body
+
+## Use
+
+```js
+var canCompute = require("can-compute");
+var canStream = require("can-stream");
+
+var compute = canCompute(0);
+var stream = canStream(compute);
+
+var streamListener = function() {};
+stream.onValue(streamListener);
+
+compute(1);// streamListener gets called with 1 (the updated value)
+```
+
+
+```js
+var MyMap = DefineMap.extend({
+    tasks: {
+        Type: DefineList.List,
+        value: []
+    }
+});
+var map = new MyMap();
+
+var stream = canStream.toStream(map.tasks, 'length');
+var stream = canStream.toStream(map, '.tasks');
+var stream = canStream.toStream(map, '.tasks length');
+```
