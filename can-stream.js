@@ -121,14 +121,10 @@ canStream.toSingleStream = function() {
 	return Kefir.merge(arguments);
 };
 
+/*
+ * A single API to handle most of the cases
+ */
 canStream.toStream = function() {
-	//handle cases:
-	// computeStream.toStream(compute)  //#1
-	// computeStream.toStream(obj, ".tasks") //#2a
-	// computeStream.toStream(obj, ".foo.bar") //#2b
-	// computeStream.toStream( obj, "close") //#3a
-	// computeStream.toStream(obj, ".tasks add") //#3b
-	// computeStream.toStream(obj, ".person.tasks add") //#3b
 
 	if(arguments.length === 1) {
 		//we expect it to be a compute:
