@@ -51,7 +51,7 @@ to provide the stream functionality.
   Creates a stream based on property value change on observable
 
   @param {observable} An observable object
-  @par am {string} property name
+  @param {string} property name
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
