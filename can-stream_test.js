@@ -3,9 +3,6 @@ var canStream = require('can-stream');
 var compute = require('can-compute');
 var DefineMap = require('can-define/map/map');
 var DefineList = require('can-define/list/list');
-var Observation = require('can-observation');
-var assign = require("can-util/js/assign/assign");
-var canEvent = require('can-event');
 
 
 QUnit.module('can-stream');
@@ -41,18 +38,6 @@ test('Compute streams do not bind to the compute unless activated', function () 
 	stream.onValue(function () {});
 
 	QUnit.equal(c.computeInstance._bindings, 1);
-});
-
-test('Dependent compute streams do not bind to parent computes unless activated', function () {
-	var c1 = compute(0);
-	var c2 = compute(0);
-
-	var stream = canStream.toStreamFromCompute(c1, c2, function (s1, s2) {
-		return s1.merge(s2);
-	});
-
-	QUnit.equal(c1._bindings, undefined);
-	QUnit.equal(c2._bindings, undefined);
 });
 
 
