@@ -34,18 +34,18 @@ canStream.singleComputeToStream = function (compute) {
  */
 canStream.toStreamFromCompute = function () {
 	var computes = makeArray(arguments);
-	var evaluator;
+	var callback;
 
 	if (computes[computes.length - 1].isComputed) {
-		evaluator = function () {
+		callback = function () {
 			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
 		};
 	} else {
-		evaluator = computes.pop();
+		callback = computes.pop();
 	}
 
 	var streams = computes.map(canStream.singleComputeToStream);
-	return evaluator.apply(this, streams);
+	return callback.apply(this, streams);
 };
 
 /*
@@ -128,7 +128,7 @@ canStream.toStream = function() {
 
 	if(arguments.length === 1) {
 		//we expect it to be a compute:
-		return canStream.toStreamFromCompute(arguments[0]); //#1
+		return canStream.toStreamFromCompute(arguments[0]); //toStream(compute)
 	}
 	else if(arguments.length > 1) {
 		var obs = arguments[0];
@@ -138,18 +138,18 @@ canStream.toStream = function() {
 			//no space found (so addressing the first three)
 			if(eventNameOrPropName.indexOf(".") === 0) {
 				//starts with a dot
-				return canStream.toStreamFromProperty(obs, eventNameOrPropName.slice(1)); //#2a
+				return canStream.toStreamFromProperty(obs, eventNameOrPropName.slice(1)); //toStream(obj, "tasks")
 			}
 			else {
-				return canStream.toStreamFromEvent(obs, eventNameOrPropName); //#3a
+				return canStream.toStreamFromEvent(obs, eventNameOrPropName); //toStream( obj, "close")
 			}
 		}
 		else {
 			var splitEventNameAndProperty = eventNameOrPropName.split(" ");
-			return canStream.toStreamFromEvent(obs, splitEventNameAndProperty[0].slice(1), splitEventNameAndProperty[1]);  //#3b
+			return canStream.toStreamFromEvent(obs, splitEventNameAndProperty[0].slice(1), splitEventNameAndProperty[1]);  //toStream(obj, "tasks add")
 		}
 	}
-	return false; //we reached the end for some reason without creating any stream.
+	return undefined;
 };
 
 module.exports = canStream;
