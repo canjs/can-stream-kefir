@@ -1,5 +1,5 @@
 {
-  "name": "can-compute-stream",
+  "name": "can-stream",
   "version": "0.0.1",
   "description": "Stream values into and out of computes",
   "homepage": "http://canjs.com",
@@ -15,6 +15,7 @@
     "testee": "testee test.html --browsers firefox",
     "test": "npm run jshint && npm run testee",
     "jshint": "jshint *.js --config",
+    "release:pre": "npm version prerelease && npm publish",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
@@ -23,7 +24,7 @@
     "develop": "done-serve --static --develop --port 8080",
     "release:pre": "npm version prerelease && npm publish"
   },
-  "main": "can-compute-stream",
+  "main": "can-stream",
   "keywords": [
     "canjs",
     "canjs-plugin",
@@ -37,7 +38,9 @@
   },
   "dependencies": {
     "can-compute": "3.0.0-pre.11",
-    "can-define": "https://github.com/canjs/can-define#type-compute-and-extensions",
+    "can-define": "^0.8.2",
+    "can-event": "^3.0.0-pre.16",
+    "can-observation": "^3.0.0-pre.13",
     "can-util": "^3.0.0-pre.34",
     "kefir": "^3.4.0"
   },
@@ -54,7 +57,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/canjs/can-compute-stream.git"
+    "url": "git://github.com/canjs/can-stream.git"
   },
   "bit-docs": {
     "dependencies": {
@@ -69,9 +72,9 @@
     },
     "readme": {
       "apis": [
-        "can-compute-stream"
+        "can-stream"
       ]
     },
-    "parent": "can-compute-stream"
+    "parent": "can-stream"
   }
 }

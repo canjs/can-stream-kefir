@@ -73,7 +73,9 @@ Creates a stream based on property value change on observable
 
 @body
 
-## Use
+## Usage
+
+Create a stream based on an existing `compute`
 
 ```js
 var canCompute = require("can-compute");
@@ -88,6 +90,7 @@ stream.onValue(streamListener);
 compute(1);// streamListener gets called with 1 (the updated value)
 ```
 
+Use with `DefineMap` and create streams on properties:
 
 ```js
 var MyMap = DefineMap.extend({
