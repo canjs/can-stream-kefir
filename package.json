@@ -1,6 +1,6 @@
 {
   "name": "can-stream",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Stream values into and out of computes",
   "homepage": "http://canjs.com",
   "author": {
@@ -21,8 +21,7 @@
     "release:major": "npm version major && npm publish",
     "build": "node build.js",
     "document": "bit-docs",
-    "develop": "done-serve --static --develop --port 8080",
-    "release:pre": "npm version prerelease && npm publish"
+    "develop": "done-serve --static --develop --port 8080"
   },
   "main": "can-stream",
   "keywords": [
