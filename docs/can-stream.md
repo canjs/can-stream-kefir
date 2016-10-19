@@ -5,7 +5,7 @@
 @module {Function} can-stream
 @parent can-ecosystem
 
-Convert a [can-compute] into a stream. [Kefir](https://rpominov.github.io/kefir/) is used internally to provide the stream functionality.
+@description Convert a [can-compute] into a stream. [Kefir](https://rpominov.github.io/kefir/) is used internally to provide the stream functionality.
 
 @signature `canStream( computes )`
 
