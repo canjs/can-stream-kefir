@@ -5,14 +5,11 @@
 @module {Function} can-stream
 @parent can-ecosystem
 
-Convert one or more [can-compute]s into a stream, multiple computes into a single compute, or
-multiple computes into a single stream. [Kefir](https://rpominov.github.io/kefir/) is used internally
-to provide the stream functionality.
+Convert a [can-compute] into a stream. [Kefir](https://rpominov.github.io/kefir/) is used internally to provide the stream functionality.
 
-@signature `canStream(…computes[, evaluator])`
+@signature `canStream( computes )`
 
-  Convert one or more [can-compute]s into a stream. If `evaluator` is not provided,
-  [Kefir’s merge method](https://rpominov.github.io/kefir/#merge) will be used to combine the streams.
+  Convert a [can-compute] into a stream.
 
   Convert one compute into a stream:
 
@@ -20,58 +17,45 @@ to provide the stream functionality.
   canStream.toStreamFromCompute(compute1);
   ```
 
-  Convert multiple computes into a stream (using the default [merge](https://rpominov.github.io/kefir/#merge) evaluator):
-
-  ```js
-  canStream.toStreamFromCompute(compute1, compute2);
-  ```
-
-  Convert multiple computes into a stream with a custom evaluator:
-
-  ```js
-  canStream.toStreamFromCompute(compute1, compute2, function(stream1, stream2) {});
-  ```
-
-  @param {can-compute} computes One or more instances of [can-compute].
-  @param {Function} evaluator A function that’s called with each of the computes converted into a stream.
-
+  @param {can-compute} computes instance of [can-compute].
+  
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.toStreamFromProperty(obs, propName)`
+@signature `canStream.toStreamFromProperty( obs, propName )`
 
   Creates a stream based on property value change on observable
 
-  @param {observable} An observable object
-  @param {string} property name
+  @param {Observable} An observable object
+  @param {String} property name
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.toStreamFromEvent(obs, propName)`
+@signature `canStream.toStreamFromEvent( obs, propName )`
 
   Creates a stream based on property value change on observable
 
-  @param {observable} An observable object
-  @param {string} property name
+  @param {Observable} An observable object
+  @param {String} property name
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.toStreamFromEvent(obs, propName, eventName)`
+@signature `canStream.toStreamFromEvent( obs, propName, eventName )`
 
   Creates a stream based on event on observable
 
-  @param {observable} An observable object
-  @param {string} property name
-  @param {string} event name
+  @param {Observable} An observable object
+  @param {String} property name
+  @param {String} event name
 
   @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
 
-@signature `canStream.toStream(obs [, propName])`
+@signature `canStream.toStream( obs [, propName] )`
 
   Creates a stream from an observable
 
-  @param {observable} An observable object
-  @param {string} An observable property or an event or both (see usage below)
+  @param {Observable} An observable object
+  @param {String} An observable property or an event or both (see usage below)
 
   @return {String} a [Kefir](https://rpominov.github.io/kefir/) stream.
 
