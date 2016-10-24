@@ -325,6 +325,48 @@ test('Create a stream from a observable and event on property with shorthand met
 	map.fooList.pop();
 });
 
+
+test('Update the list to undefined', function() {
+	var expected = 0;
+	var MyMap = DefineMap.extend({
+		fooList: {
+			Type: DefineList.List,
+			value: []
+		}
+	});
+	var map = new MyMap();
+
+	var stream = canStream.toStream(map, '.fooList.length');
+
+	stream.onValue(function(newVal){
+		QUnit.equal(newVal, expected, 'Setting fooList to null');
+	});
+
+	expected = 0;
+	map.fooList = null;
+});
+
+test('Update the list to undefined', function() {
+	var expected = 0;
+	var MyMap = DefineMap.extend({
+		fooList: {
+			Type: DefineList.List,
+			value: []
+		}
+	});
+	var map = new MyMap();
+
+	var stream = canStream.toStream(map, '.fooList.length');
+
+	stream.onValue(function(newVal){
+		QUnit.equal(newVal, expected, 'Setting fooList to null');
+	});
+
+	expected = 0;
+	map.fooList = new DefineList([]);
+
+});
+
 test('Pass args back to event object when dispatch is called', function() {
 
 	var MyMap = DefineMap.extend({
@@ -333,7 +375,7 @@ test('Pass args back to event object when dispatch is called', function() {
 			value: 'bar'
 		}
 	});
-	
+
 	var obs = new MyMap();
 	var stream1 = canStream.toStream(obs, 'foo');
 
