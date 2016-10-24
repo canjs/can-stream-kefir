@@ -342,11 +342,11 @@ test('Update the list to undefined', function() {
 		QUnit.equal(newVal, expected, 'Setting fooList to null');
 	});
 
-	expected = 0;
+	expected = undefined;
 	map.fooList = null;
 });
 
-test('Update the list to undefined', function() {
+test('Update the list to a new DefineList instance', function() {
 	var expected = 0;
 	var MyMap = DefineMap.extend({
 		fooList: {
