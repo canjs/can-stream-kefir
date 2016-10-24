@@ -2,7 +2,8 @@
 @parent can-stream.fns
 
 
-@description Creates a stream based on either a [can-compute] compute or an {Observable} object
+@description Provides a shorthand for creating a stream from observable objects, properties and
+events.
 
 @signature `canStream.toStream( compute )`
 
@@ -23,55 +24,105 @@
   c1(1);
   ```
 
-  @param {Observable} An observable object
-  @param {String} An observable property or an event or both (see usage)
+  @param {can-compute} compute A compute whose value will be the stream values.
 
-  @return {String} a [Kefir](https://rpominov.github.io/kefir/) stream.
+  @return {Stream} A [Kefir](https://rpominov.github.io/kefir/) stream.
 
-@signature `canStream.toStream( obs [, propName] )`
+@signature  `canStream.toStream( obs, "eventName" )`
 
-  Creates a stream from an observable. Optionally, you can pass the second parameter that can be an observable property or an event on the observable.
+  Creates an event stream with the event objects dispatched on `obs` for `eventName`.
+  This is a shorthand for [can-stream.toStreamFromEvent].
 
-  Here we create a stream based on a property change on an observable.
   ```js
-  var canStream = require('can-stream');
-  var map = {
-      foo: "bar"
-  };
-
-  var stream = canStream.toStream(map, '.foo');
-
-  stream.onValue(function(newVal){
-    console.log(newVal);
-  });
-
-  map.foo = "foobar";
-  ```
-
-  Create a stream based on a event on an observable property
-  ```js
-  var DefineMap = require('can-map/map/map');
+  var DefineList = require('can-define/list/list');
   var canStream = require('can-stream');
 
-  var Demo = DefineMap.extend({
-      foo: {
-          type: '*',
-          value: {
-              bar: 1
-          }
-      }
+  var hobbies = new DefineList(["js","kayaking"]);
+
+  var changeCount = canStream.toStream(obs, "length").scan(function(prev){
+	  return prev + 1;
+  }, 0);
+  changeCount.onValue(function(event) {
+      console.log(event);
   });
 
-  var obs = new Demo();
-  var stream = canStream.toStream(obs, ".foo.bar");
-  stream.onValue(function(newVal) {
-    console.log(newVal);
-  });
-
-  obs.foo.bar = 2;
+  hobbies.push("bball")
+  //-> console.logs {type: "add", args: [2,["bball"]]}
+  hobbies.shift()
+  //-> console.logs {type: "remove", args: [0,["js"]]}
   ```
 
-  @param {Observable} An observable object
-  @param {String} An observable property or an event or both (see usage)
+  @param {Observable} obs An observable object like a [can-define/map/map].
+  Promises can work too.
+  @param {String} eventName An observable event name.
 
-  @return {String} a [Kefir](https://rpominov.github.io/kefir/) stream.
+  @return {String} A [Kefir](https://rpominov.github.io/kefir/) stream make up of the event objects dispatched on `obs`.
+
+
+@signature `canStream.toStream( obs, ".propName" )`
+
+  Creates a stream from an observable property value. This is a shorthand for [can-stream.toStreamFromProperty].
+
+  ```js
+  var canStream = require('can-stream');
+  var DefineMap = require("can-define/map/map");
+
+  var person = new DefineMap({
+      first: "Justin",
+	  last: "Meyer"
+  });
+
+  var first = canStream.toStream(person, '.first'),
+      last = canStream.toStream(person, '.last');
+
+  var fullName = Kefir.combine(first, last, function(first, last){
+	  return first + last;
+  });
+
+  fullName.onValue(function(newVal){
+      console.log(newVal);
+  });
+
+  map.first = "Payal"
+  //-> console.logs "Payal Meyer"
+  ```
+
+  Create a stream based on a event on an observable property.
+
+  @param {Observable} obs An observable object like a [can-define/map/map].
+    Promises can work too.
+  @param {String} propName A property name.  Multiple property names can be provided like `".foo.bar.car"`
+
+  @return {String} A [Kefir](https://rpominov.github.io/kefir/) stream of values at the specified `propName`.
+
+@signature `canStream.toStream( obs, ".propName eventName" )`
+
+  Creates a stream from an observable property value. This is a shorthand for the second signature of [can-stream.toStreamFromEvent].
+
+  ```js
+  var canStream = require('can-stream');
+  var DefineMap = require("can-define/map/map");
+  var DefineList = require("can-define/list/list");
+
+  var me = new DefineMap({
+      todos: ["mow lawn"]
+  });
+
+  var addStream = canStream.toStream(me, ".todos add");
+
+  addStream.onValue(function(event){
+      console.log(event);
+  });
+
+  map.todos.push("do dishes");
+  //-> console.logs {type: "add", args: [1,["do dishes"]]}
+  ```
+
+  Create a stream based on a event on an observable property.
+
+  @param {Observable} obs An observable object like a [can-define/map/map].
+    Promises can work too.
+
+  @param {String} propName A property name.  Multiple property names can be provided like `".foo.bar.car"`
+  @param {String} eventName An observable event name.
+  @return {String} A [Kefir](https://rpominov.github.io/kefir/) stream of the `eventName` event objects dispatched on the objects specified by `propName`.
