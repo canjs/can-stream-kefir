@@ -7,7 +7,6 @@ var DefineList = require('can-define/list/list');
 
 QUnit.module('can-stream');
 
-
 test('Compute changes can be streamed', function () {
 	var c = compute(0);
 	var stream = canStream.toStreamFromCompute(c);
