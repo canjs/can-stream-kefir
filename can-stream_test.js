@@ -324,3 +324,23 @@ test('Create a stream from a observable and event on property with shorthand met
 	expected = 0;
 	map.fooList.pop();
 });
+
+test('Pass args back to event object when dispatch is called', function() {
+
+	var MyMap = DefineMap.extend({
+		foo: {
+			type: 'string',
+			value: 'bar'
+		}
+	});
+	
+	var obs = new MyMap();
+	var stream1 = canStream.toStream(obs, 'foo');
+
+	stream1.onValue(function(ev){
+		QUnit.equal(ev.args.length, 2);
+	});
+
+	obs.dispatch('foo', ['myarg', 'myargs']);
+
+});
