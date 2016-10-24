@@ -69,7 +69,7 @@ canStream.toStreamFromEvent = function() {
         return Kefir.stream(function (emitter) {
 			var handler = function(ev){
                 var clone = assign({}, ev);
-                ev.args = Array.prototype.slice.call(arguments, 1);
+                clone.args = Array.prototype.slice.call(arguments, 1);
                 emitter.emit(clone);
             };
 
@@ -89,7 +89,7 @@ canStream.toStreamFromEvent = function() {
 		return Kefir.stream(function (emitter) {
             var handler = function(ev){
                 var clone = assign({}, ev);
-                ev.args = Array.prototype.slice.call(arguments, 1);
+                clone.args = Array.prototype.slice.call(arguments, 1);
                 emitter.emit(clone);
             };
             var curValue;
