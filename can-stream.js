@@ -3,7 +3,7 @@ var Kefir = require('kefir');
 var makeArray = require("can-util/js/make-array/make-array");
 var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
-
+var namespace = require('can-util/namespace');
 
 var canStream = {};
 
@@ -154,4 +154,4 @@ canStream.toStream = function() {
 
 
 
-module.exports = canStream;
+module.exports = namespace.stream = canStream;
