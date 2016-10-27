@@ -39,7 +39,7 @@ events.
 
   var hobbies = new DefineList(["js","kayaking"]);
 
-  var changeCount = canStream.toStream(obs, "length").scan(function(prev){
+  var changeCount = canStream.toStream(hobbies, "length").scan(function(prev){
 	  return prev + 1;
   }, 0);
   changeCount.onValue(function(event) {
