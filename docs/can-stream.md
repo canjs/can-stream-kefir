@@ -1,17 +1,17 @@
-@module {Object} can-stream can-stream
+@module {Object} can-stream-kefir can-stream-kefir
 @parent can-ecosystem
-@group can-stream.fns 1 Methods
+@group can-stream-kefir.fns 1 Methods
 @package ../package.json
 
 @description Convert observable values into streams. [Kefir](https://rpominov.github.io/kefir/) is used internally to provide the stream functionality.
 
 @type {Object}
 
-  The `can-stream` module exports methods useful for converting observable values like [can-compute]s
+  The `can-stream-kefir` module exports methods useful for converting observable values like [can-compute]s
   or [can-define/map/map] properties into streams.
 
   ```js
-  var canStream = require("can-stream");
+  var canStream = require("can-stream-kefir");
   var DefineMap = require("can-define/map/map");
 
   var me = new DefineMap({name: "Justin"});
@@ -30,10 +30,10 @@
 
 ## Usage
 
-The [can-stream.toStream] method has shorthands for all of the other methods:
+The [can-stream-kefir.toStream] method has shorthands for all of the other methods:
 
 ```
-var canStream = require("can-stream");
+var canStream = require("can-stream-kefir");
 
 canStream.toStream(compute)                    //-> stream
 canStream.toStream(map, "eventName")           //-> stream
@@ -47,7 +47,7 @@ __Converting a compute to a stream__
 
 ```js
 var canCompute = require("can-compute");
-var canStream = require("can-stream");
+var canStream = require("can-stream-kefir");
 
 var compute = canCompute(0);
 var stream = canStream.toStream(compute);
@@ -64,7 +64,7 @@ __Converting an event to a stream__
 
 ```js
 var DefineList = require('can-define/list/list');
-var canStream = require('can-stream');
+var canStream = require('can-stream-kefir');
 
 var hobbies = new DefineList(["js","kayaking"]);
 
@@ -84,7 +84,7 @@ hobbies.shift()
 __Converting a property value to a stream__
 
 ```js
-var canStream = require('can-stream');
+var canStream = require('can-stream-kefir');
 var DefineMap = require("can-define/map/map");
 
 var person = new DefineMap({
@@ -110,7 +110,7 @@ map.first = "Payal"
 __Converting an event on a nested object into a stream__
 
 ```js
-var canStream = require('can-stream');
+var canStream = require('can-stream-kefir');
 var DefineMap = require("can-define/map/map");
 var DefineList = require("can-define/list/list");
 
