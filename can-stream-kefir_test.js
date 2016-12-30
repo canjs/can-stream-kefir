@@ -251,6 +251,26 @@ test('Create a stream from an observable and property with shorthand method: toS
 	map.foo = "foobar";
 
 });
+
+test('Create a stream from an observable and property with shorthand method: canStream', function() {
+
+	var expected = "bar";
+	var map = {
+		foo: "bar"
+	};
+	var stream = canStream(map, '.foo');
+
+	stream.onValue(function(ev){
+		QUnit.equal(ev, expected);
+	});
+
+
+	expected = "foobar";
+	map.foo = "foobar";
+
+});
+
+
 test('Create a stream from a observable and nested property with shorthand method: toStream', function() {
 
 	var expected = 1;
