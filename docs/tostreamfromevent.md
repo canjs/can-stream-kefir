@@ -1,5 +1,5 @@
-@function can-stream.toStreamFromEvent toStreamFromEvent
-@parent can-stream.fns
+@function can-stream-kefir.toStreamFromEvent toStreamFromEvent
+@parent can-stream-kefir.fns
 
 
 @description Creates a stream on a {Observable} object that gets updated whenever the event occurs on the observable object.
@@ -9,7 +9,7 @@
   Creates a stream based on property value change on observable
 
   ```js
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
   var compute = require('can-compute');
   var DefineMap = require('can-define/map/map');
   var DefineList = require('can-define/list/list');
@@ -42,7 +42,7 @@
   Creates a stream based on event trigger on observable property
 
   ```js
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
   var compute = require('can-compute');
   var DefineMap = require('can-define/map/map');
   var DefineList = require('can-define/list/list');

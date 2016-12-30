@@ -1,11 +1,11 @@
 var QUnit = require('steal-qunit');
-var canStream = require('can-stream');
+var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
 var DefineMap = require('can-define/map/map');
 var DefineList = require('can-define/list/list');
 
 
-QUnit.module('can-stream');
+QUnit.module('can-stream-kefir');
 
 test('Compute changes can be streamed', function () {
 	var c = compute(0);
@@ -385,4 +385,41 @@ test('Pass args back to event object when dispatch is called', function() {
 
 	obs.dispatch('foo', ['myarg', 'myargs']);
 
+});
+
+test("toCompute(streamMaker) can-define-stream#17", function(){
+	var c = compute("a");
+	var letterStream = canStream.toStreamFromCompute(c);
+
+	var streamedCompute = canStream.toCompute(function(setStream){
+		return setStream.merge(letterStream);
+	});
+
+	streamedCompute.on("change", function(ev, newVal){
+
+	});
+
+	QUnit.deepEqual( streamedCompute(), "a" );
+
+	c(1);
+
+	QUnit.deepEqual( streamedCompute(), 1 );
+
+	c("b");
+
+	QUnit.deepEqual( streamedCompute(), "b" );
+});
+
+test("setting test", function(){
+
+	var c = canStream.toCompute(function(setStream){
+		return setStream;
+	});
+
+	c(5);
+	// listen to the compute for it to have a value
+	c.on("change", function(){});
+
+	// immediate value
+	QUnit.equal( c(), 5);
 });

@@ -1,5 +1,5 @@
-@function can-stream.toStreamFromCompute toStreamFromCompute
-@parent can-stream.fns
+@function can-stream-kefir.toStreamFromCompute toStreamFromCompute
+@parent can-stream-kefir.fns
 
 
 @description Creates a stream from [can-compute] instance which gets updated whenever the compute changes.
@@ -9,7 +9,7 @@
   Convert a compute into a stream:
 
   ```js
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
   var compute = require('can-compute');
   var foo = 'bar';
   var compute1 = compute(foo);

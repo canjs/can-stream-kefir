@@ -1,5 +1,5 @@
-@function can-stream.toStream toStream
-@parent can-stream.fns
+@function can-stream-kefir.toStream toStream
+@parent can-stream-kefir.fns
 
 
 @description Provides a shorthand for creating a stream from observable objects, properties and
@@ -11,7 +11,7 @@ events.
 
   ```js
   var compute = require('can-compute');
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
 
   var c1 = compute(0);
 
@@ -31,11 +31,11 @@ events.
 @signature  `canStream.toStream( obs, "eventName" )`
 
   Creates an event stream with the event objects dispatched on `obs` for `eventName`.
-  This is a shorthand for [can-stream.toStreamFromEvent].
+  This is a shorthand for [can-stream-kefir.toStreamFromEvent].
 
   ```js
   var DefineList = require('can-define/list/list');
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
 
   var hobbies = new DefineList(["js","kayaking"]);
 
@@ -61,10 +61,10 @@ events.
 
 @signature `canStream.toStream( obs, ".propName" )`
 
-  Creates a stream from an observable property value. This is a shorthand for [can-stream.toStreamFromProperty].
+  Creates a stream from an observable property value. This is a shorthand for [can-stream-kefir.toStreamFromProperty].
 
   ```js
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
   var DefineMap = require("can-define/map/map");
 
   var person = new DefineMap({
@@ -97,10 +97,10 @@ events.
 
 @signature `canStream.toStream( obs, ".propName eventName" )`
 
-  Creates a stream from an observable property value. This is a shorthand for the second signature of [can-stream.toStreamFromEvent].
+  Creates a stream from an observable property value. This is a shorthand for the second signature of [can-stream-kefir.toStreamFromEvent].
 
   ```js
-  var canStream = require('can-stream');
+  var canStream = require('can-stream-kefir');
   var DefineMap = require("can-define/map/map");
   var DefineList = require("can-define/list/list");
 

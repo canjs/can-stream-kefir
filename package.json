@@ -1,5 +1,5 @@
 {
-  "name": "can-stream",
+  "name": "can-stream-kefir",
   "version": "0.0.5",
   "description": "Stream values into and out of computes",
   "homepage": "http://canjs.com",
@@ -23,7 +23,7 @@
     "document": "bit-docs",
     "develop": "done-serve --static --develop --port 8080"
   },
-  "main": "can-stream",
+  "main": "can-stream-kefir",
   "keywords": [
     "canjs",
     "canjs-plugin",
@@ -56,7 +56,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/canjs/can-stream.git"
+    "url": "git://github.com/canjs/can-stream-kefir.git"
   },
   "bit-docs": {
     "dependencies": {
@@ -71,9 +71,9 @@
     },
     "readme": {
       "apis": [
-        "can-stream"
+        "can-stream-kefir"
       ]
     },
-    "parent": "can-stream"
+    "parent": "can-stream-kefir"
   }
 }
