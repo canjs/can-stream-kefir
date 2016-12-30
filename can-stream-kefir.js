@@ -153,5 +153,56 @@ canStream.toStream = function() {
 };
 
 
+canStream.toCompute = function(makeStream, context){
+
+	var emitter,
+		lastValue,
+		streamHandler,
+		lastSetValue;
+
+	var setterStream = Kefir.stream(function (e) {
+		emitter = e;
+		if(lastSetValue !== undefined) {
+			emitter.emit(lastSetValue);
+		}
+
+	}),
+		valueStream = makeStream.call(context, setterStream);
+
+
+	// Create a compute that will bind to the resolved stream when bound
+	return compute(undefined, {
+
+		// When the compute is read, use that last value
+		get: function () {
+			return lastValue;
+		},
+		set: function (val) {
+			if(emitter) {
+				emitter.emit(val);
+			} else {
+				lastSetValue = val;
+			}
+			return val;
+		},
+
+		// When the compute is bound, bind to the resolved stream
+		on: function (updated) {
+
+			// When the stream passes a new values, save a reference to it and call
+			// the compute's internal `updated` method (which ultimately calls `get`)
+			streamHandler = function (val) {
+				lastValue = val;
+				updated();
+			};
+			valueStream.onValue(streamHandler);
+		},
+
+		// When the compute is unbound, unbind from the resolved stream
+		off: function () {
+			valueStream.offValue(streamHandler);
+		}
+	});
+};
 
 module.exports = namespace.stream = canStream;
