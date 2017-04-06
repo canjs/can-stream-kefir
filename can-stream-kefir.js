@@ -149,8 +149,6 @@ canStream.toSingleStream = function() {
 };
 
 
-
-
 canStream.toCompute = function(makeStream, context){
 
 	var emitter,
@@ -203,4 +201,7 @@ canStream.toCompute = function(makeStream, context){
 	});
 };
 
+/*
+ * Exposes a simple toStream method that takes an observable and event or propname and returns a Kefir stream object
+ */
 module.exports = namespace.stream = canStream;
