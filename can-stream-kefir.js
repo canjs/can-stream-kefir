@@ -1,8 +1,8 @@
-var compute = require('can-compute');
 var Kefir = require('kefir');
-var makeArray = require("can-util/js/make-array/make-array");
+var compute = require('can-compute');
 var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
+var makeArray = require("can-util/js/make-array/make-array");
 var namespace = require('can-util/namespace');
 
 var canStream = function() {
@@ -107,38 +107,39 @@ canStream.toStreamFromEvent = function() {
             };
         });
     } else {
-		//.toStreamFromEvent(obs, propName, event);
-		propName = arguments[1];
-		eventName = arguments[2];
+			//.toStreamFromEvent(obs, propName, event);
+			propName = arguments[1];
+			eventName = arguments[2];
 
-		var propValueStream = canStream.toStreamFromProperty(obs, propName);
+			var propValueStream = canStream.toStreamFromProperty(obs, propName);
 
-		return Kefir.stream(function (emitter) {
-            var handler = function(ev){
-                var clone = assign({}, ev);
-                clone.args = Array.prototype.slice.call(arguments, 1);
-                emitter.emit(clone);
-            };
-            var curValue;
+			return Kefir.stream(function (emitter) {
+				var handler = function(ev){
+	          var clone = assign({}, ev);
+	          clone.args = Array.prototype.slice.call(arguments, 1);
+	          emitter.emit(clone);
+	      };
 
-            propValueStream.onValue(function(value){
-                if(curValue) {
-                    canEvent.removeEventListener.call(curValue, eventName, handler);
-                }
-                if(value) {
-                    canEvent.addEventListener.call(value, eventName, handler);
-                }
-                curValue = value;
-            });
+				var curValue;
+
+	      propValueStream.onValue(function(value){
+	          if(curValue) {
+	              canEvent.removeEventListener.call(curValue, eventName, handler);
+	          }
+	          if(value) {
+	              canEvent.addEventListener.call(value, eventName, handler);
+	          }
+	          curValue = value;
+	      });
 
 
-            return function(){
-                if(curValue) {
-                    canEvent.removeEventListener.call(curValue, eventName, handler);
-                }
-            };
-        });
-    }
+	      return function(){
+	          if(curValue) {
+	              canEvent.removeEventListener.call(curValue, eventName, handler);
+	          }
+	      };
+	  	});
+  	}
 };
 
 /*
