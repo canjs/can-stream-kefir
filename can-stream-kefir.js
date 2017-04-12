@@ -5,11 +5,13 @@ var canEvent = require('can-event');
 var makeArray = require("can-util/js/make-array/make-array");
 var namespace = require('can-util/namespace');
 
-var canStream = function() {
+var canStreamKefir = {};
+
+canStreamKefir.toStream = function() {
 
 	if(arguments.length === 1) {
 		//we expect it to be a compute:
-		return canStream.toStreamFromCompute(arguments[0]); //toStream(compute)
+		return canStreamKefir.toStreamFromCompute(arguments[0]); //toStream(compute)
 	}
 	else if(arguments.length > 1) {
 		var obs = arguments[0];
@@ -19,38 +21,18 @@ var canStream = function() {
 			//no space found (so addressing the first three)
 			if(eventNameOrPropName.indexOf(".") === 0) {
 				//starts with a dot
-				return canStream.toStreamFromProperty(obs, eventNameOrPropName.slice(1)); //toStream(obj, "tasks")
+				return canStreamKefir.toStreamFromProperty(obs, eventNameOrPropName.slice(1)); //toStream(obj, "tasks")
 			}
 			else {
-				return canStream.toStreamFromEvent(obs, eventNameOrPropName); //toStream( obj, "close")
+				return canStreamKefir.toStreamFromEvent(obs, eventNameOrPropName); //toStream( obj, "close")
 			}
 		}
 		else {
 			var splitEventNameAndProperty = eventNameOrPropName.split(" ");
-			return canStream.toStreamFromEvent(obs, splitEventNameAndProperty[0].slice(1), splitEventNameAndProperty[1]);  //toStream(obj, "tasks add")
+			return canStreamKefir.toStreamFromEvent(obs, splitEventNameAndProperty[0].slice(1), splitEventNameAndProperty[1]);  //toStream(obj, "tasks add")
 		}
 	}
 	return undefined;
-};
-canStream.toStream = canStream;
-
-/*
- * Pipes the value of a compute into a stream
- */
-canStream.singleComputeToStream = function (compute) {
-	return Kefir.stream(function (emitter) {
-		var changeHandler = function (ev, newVal) {
-			emitter.emit(newVal);
-		};
-
-		compute.on('change', changeHandler);
-
-		emitter.emit(compute());
-
-		return function () {
-			compute.off('change', changeHandler);
-		};
-	});
 };
 
 
@@ -59,7 +41,7 @@ canStream.singleComputeToStream = function (compute) {
  * streams into a single stream. Assumes all arguments are computes and last
  * argument is optionally a function.
  */
-canStream.toStreamFromCompute = function () {
+canStreamKefir.toStreamFromCompute = function () {
 	var computes = makeArray(arguments);
 	var callback;
 
@@ -71,21 +53,35 @@ canStream.toStreamFromCompute = function () {
 		callback = computes.pop();
 	}
 
-	var streams = computes.map(canStream.singleComputeToStream);
+	var streams = computes.map(function(compute) {
+		return Kefir.stream(function (emitter) {
+			var changeHandler = function (ev, newVal) {
+				emitter.emit(newVal);
+			};
+
+			compute.on('change', changeHandler);
+
+			emitter.emit(compute());
+
+			return function () {
+				compute.off('change', changeHandler);
+			};
+		});
+	});
 	return callback.apply(this, streams);
 };
 
 /*
  * Returns a single stream for a property on an {observable}
  */
-canStream.toStreamFromProperty = function( obs, propName ) {
-	return canStream.toStreamFromCompute(compute(obs, propName));
+canStreamKefir.toStreamFromProperty = function( obs, propName ) {
+	return canStreamKefir.toStreamFromCompute(compute(obs, propName));
 };
 
 /*
  * Returns a single stream for a specific event on an {observable} property
  */
-canStream.toStreamFromEvent = function() {
+canStreamKefir.toStreamFromEvent = function() {
 	var obs = arguments[0];
 	var eventName, propName;
 
@@ -111,7 +107,7 @@ canStream.toStreamFromEvent = function() {
 			propName = arguments[1];
 			eventName = arguments[2];
 
-			var propValueStream = canStream.toStreamFromProperty(obs, propName);
+			var propValueStream = canStreamKefir.toStreamFromProperty(obs, propName);
 
 			return Kefir.stream(function (emitter) {
 				var handler = function(ev){
@@ -142,15 +138,7 @@ canStream.toStreamFromEvent = function() {
   	}
 };
 
-/*
- * Takes multiple streams and returns a single stream
- */
-canStream.toSingleStream = function() {
-	return Kefir.merge(arguments);
-};
-
-
-canStream.toCompute = function(makeStream, context){
+canStreamKefir.toCompute = function(makeStream, context){
 
 	var emitter,
 		lastValue,
@@ -205,4 +193,4 @@ canStream.toCompute = function(makeStream, context){
 /*
  * Exposes a simple toStream method that takes an observable and event or propname and returns a Kefir stream object
  */
-module.exports = namespace.stream = canStream;
+module.exports = namespace.stream = canStreamKefir;

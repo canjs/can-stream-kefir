@@ -3,7 +3,7 @@ var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
 var DefineMap = require('can-define/map/map');
 var DefineList = require('can-define/list/list');
-
+var Kefir = require('kefir');
 
 QUnit.module('can-stream-kefir');
 
@@ -131,7 +131,8 @@ test('Multiple streams piped into single stream - toStreamFromProperty', functio
 	var stream1 = canStream.toStreamFromProperty(map, 'foo');
 	var stream2 = canStream.toStreamFromProperty(map, 'foo2');
 
-	var singleStream = canStream.toSingleStream(stream1, stream2);
+
+	var singleStream = Kefir.merge([stream1, stream2]);
 
 	singleStream.onValue(function(ev){
 		QUnit.equal(ev, expected);
@@ -258,7 +259,7 @@ test('Create a stream from an observable and property with shorthand method: can
 	var map = {
 		foo: "bar"
 	};
-	var stream = canStream(map, '.foo');
+	var stream = canStream.toStream(map, '.foo');
 
 	stream.onValue(function(ev){
 		QUnit.equal(ev, expected);
