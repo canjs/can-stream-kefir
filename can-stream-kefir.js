@@ -3,7 +3,8 @@ var compute = require('can-compute');
 var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
 var makeArray = require("can-util/js/make-array/make-array");
-var namespace = require('can-util/namespace');
+// var namespace = require('can-util/namespace');
+var canStream = require('can-stream');
 
 var canStreamKefir = {};
 
@@ -193,4 +194,4 @@ canStreamKefir.toCompute = function(makeStream, context){
 /*
  * Exposes a simple toStream method that takes an observable and event or propname and returns a Kefir stream object
  */
-module.exports = namespace.stream = canStreamKefir;
+module.exports = canStream(canStreamKefir);

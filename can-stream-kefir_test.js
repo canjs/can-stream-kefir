@@ -9,7 +9,7 @@ QUnit.module('can-stream-kefir');
 
 test('Compute changes can be streamed', function () {
 	var c = compute(0);
-	var stream = canStream.toStreamFromCompute(c);
+	var stream = canStream.toStream(c);
 	var computeVal;
 
 	stream.onValue(function (newVal) {
@@ -30,7 +30,7 @@ test('Compute changes can be streamed', function () {
 
 test('Compute streams do not bind to the compute unless activated', function () {
 	var c = compute(0);
-	var stream = canStream.toStreamFromCompute(c);
+	var stream = canStream.toStream(c);
 
 	QUnit.equal(c.computeInstance._bindings, undefined);
 
@@ -95,7 +95,7 @@ test('Stream on a property val - toStreamFromEvent', function(){
 		foo: "bar"
 	});
 	var map = new MyMap();
-	var stream = canStream.toStreamFromEvent(map, 'foo');
+	var stream = canStream.toStream(map, 'foo');
 
 	stream.onValue(function(ev){
 		QUnit.equal(ev.target.foo, expected);
@@ -110,7 +110,7 @@ test('Stream on a property val - toStreamFromProperty', function(){
 	var map = {
 		foo: "bar"
 	};
-	var stream = canStream.toStreamFromProperty(map, 'foo');
+	var stream = canStream.toStream(map, '.foo');
 
 	stream.onValue(function(ev){
 		QUnit.equal(ev, expected);
@@ -128,8 +128,8 @@ test('Multiple streams piped into single stream - toStreamFromProperty', functio
 		foo: "bar",
 		foo2: "bar"
 	};
-	var stream1 = canStream.toStreamFromProperty(map, 'foo');
-	var stream2 = canStream.toStreamFromProperty(map, 'foo2');
+	var stream1 = canStream.toStream(map, '.foo');
+	var stream2 = canStream.toStream(map, '.foo2');
 
 
 	var singleStream = Kefir.merge([stream1, stream2]);
@@ -157,7 +157,7 @@ test('Event streams fire change events', function () {
 	});
 	var map = new MyMap();
 
-	var stream = canStream.toStreamFromEvent(map.fooList, 'length');
+	var stream = canStream.toStream(map.fooList, 'length');
 
 	stream.onValue(function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
@@ -184,7 +184,7 @@ test('Convert an observable nested property into an event stream #2b', function(
 	});
 	var obs = new MyMap();
 
-	var stream = canStream.toStreamFromEvent(obs.foo, "bar");
+	var stream = canStream.toStream(obs.foo, "bar");
 
 	stream.onValue(function(ev) {
 		QUnit.equal(expected, ev.target.bar);
@@ -205,7 +205,7 @@ test('Event streams fire change events on a property', function () {
 	});
 	var map = new MyMap();
 
-	var stream = canStream.toStreamFromEvent(map, 'fooList', 'length');
+	var stream = canStream.toStream(map, '.fooList', 'length');
 
 	stream.onValue(function(ev){
 		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
@@ -410,7 +410,7 @@ test('Pass args back to event object when dispatch is called', function() {
 
 test("toCompute(streamMaker) can-define-stream#17", function(){
 	var c = compute("a");
-	var letterStream = canStream.toStreamFromCompute(c);
+	var letterStream = canStream.toStream(c);
 
 	var streamedCompute = canStream.toCompute(function(setStream){
 		return setStream.merge(letterStream);

@@ -39,6 +39,7 @@
     "can-define": "^1.0.0",
     "can-event": "^3.0.0",
     "can-observation": "^3.0.0",
+    "can-stream": "file:///Users/obaidahmed/Development/bitovi/can-stream",
     "can-util": "^3.0.0",
     "kefir": "^3.5.1"
   },
