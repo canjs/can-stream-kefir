@@ -3,7 +3,6 @@ var compute = require('can-compute');
 var assign = require("can-util/js/assign/assign");
 var canEvent = require('can-event');
 var makeArray = require("can-util/js/make-array/make-array");
-// var namespace = require('can-util/namespace');
 var canStream = require('can-stream');
 
 var canStreamKefir = {};
