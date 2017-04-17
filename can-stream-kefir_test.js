@@ -1,9 +1,6 @@
 var QUnit = require('steal-qunit');
 var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
-var DefineMap = require('can-define/map/map');
-var DefineList = require('can-define/list/list');
-var Kefir = require('kefir');
 
 QUnit.module('can-stream-kefir');
 
@@ -42,7 +39,7 @@ test('Compute stream values can be piped into a compute', function () {
 	var c1 = compute(0);
 	var c2 = compute(0);
 
-	var resultCompute = canStream.toStreamFromCompute(c1, c2, function (s1, s2) {
+	var resultCompute = canStream.toStream(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
@@ -67,7 +64,7 @@ test('Computed streams fire change events', function () {
 	var c1 = compute(expected);
 	var c2 = compute(expected);
 
-	var resultCompute = canStream.toStreamFromCompute(c1, c2, function (s1, s2) {
+	var resultCompute = canStream.toStream(c1, c2, function (s1, s2) {
 		return s1.merge(s2);
 	});
 
@@ -86,135 +83,7 @@ test('Computed streams fire change events', function () {
 });
 
 
-test('Stream on a property val - toStreamFromEvent', function(){
-	var expected = "bar";
-	var MyMap = DefineMap.extend({
-		foo: "bar"
-	});
-	var map = new MyMap();
-	var stream = canStream.toStream(map, 'foo');
 
-	stream.onValue(function(ev){
-		QUnit.equal(ev.target.foo, expected);
-	});
-
-	expected = "foobar";
-	map.foo = "foobar";
-});
-
-test('Stream on a property val - toStreamFromProperty', function(){
-	var expected = "bar";
-	var map = {
-		foo: "bar"
-	};
-	var stream = canStream.toStream(map, '.foo');
-
-	stream.onValue(function(ev){
-		QUnit.equal(ev, expected);
-	});
-
-
-	expected = "foobar";
-	map.foo = "foobar";
-
-});
-
-test('Multiple streams piped into single stream - toStreamFromProperty', function(){
-	var expected = "bar";
-	var map = {
-		foo: "bar",
-		foo2: "bar"
-	};
-	var stream1 = canStream.toStream(map, '.foo');
-	var stream2 = canStream.toStream(map, '.foo2');
-
-
-	var singleStream = Kefir.merge([stream1, stream2]);
-
-	singleStream.onValue(function(ev){
-		QUnit.equal(ev, expected);
-	});
-
-	expected = "foobar";
-	map.foo = "foobar";
-
-	expected = "foobar2";
-	map.foo2 = "foobar2";
-
-});
-
-
-test('Event streams fire change events', function () {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map.fooList, 'length');
-
-	stream.onValue(function(ev){
-		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
-	});
-
-	expected = 1;
-	map.fooList.push(1);
-
-	expected = 0;
-	map.fooList.pop();
-
-});
-
-test('Convert an observable nested property into an event stream #2b', function() {
-	var expected = 1;
-	var MyMap = DefineMap.extend({
-		foo: {
-			value: {
-				bar: {
-					value: 1
-				}
-			}
-		}
-	});
-	var obs = new MyMap();
-
-	var stream = canStream.toStream(obs.foo, "bar");
-
-	stream.onValue(function(ev) {
-		QUnit.equal(expected, ev.target.bar);
-	});
-
-	expected = 2;
-	obs.foo.bar = 2;
-
-});
-
-test('Event streams fire change events on a property', function () {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map, '.fooList', 'length');
-
-	stream.onValue(function(ev){
-		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
-	});
-
-	expected = 1;
-	map.fooList.push(1);
-
-	expected = 0;
-	map.fooList.pop();
-
-});
 
 
 test('Create a stream from a compute with shorthand method: toStream', function() {
@@ -232,178 +101,7 @@ test('Create a stream from a compute with shorthand method: toStream', function(
 
 });
 
-test('Create a stream from an observable and property with shorthand method: toStream', function() {
 
-	var expected = "bar";
-	var map = {
-		foo: "bar"
-	};
-	var stream = canStream.toStream(map, '.foo');
-
-	stream.onValue(function(ev){
-		QUnit.equal(ev, expected);
-	});
-
-
-	expected = "foobar";
-	map.foo = "foobar";
-
-});
-
-test('Create a stream from an observable and property with shorthand method: canStream', function() {
-
-	var expected = "bar";
-	var map = {
-		foo: "bar"
-	};
-	var stream = canStream.toStream(map, '.foo');
-
-	stream.onValue(function(ev){
-		QUnit.equal(ev, expected);
-	});
-
-
-	expected = "foobar";
-	map.foo = "foobar";
-
-});
-
-
-test('Create a stream from a observable and nested property with shorthand method: toStream', function() {
-
-	var expected = 1;
-	var MyMap = DefineMap.extend({
-		foo: {
-			type: '*',
-			value: {
-				bar: 1
-			}
-		}
-	});
-	var obs = new MyMap();
-
-	var stream = canStream.toStream(obs, ".foo.bar");
-
-	stream.onValue(function(newVal) {
-		QUnit.equal(expected, newVal);
-	});
-
-	expected = 2;
-	obs.foo.bar = 2;
-
-});
-
-
-
-
-test('Create a stream from a observable and event with shorthand method: toStream', function() {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map.fooList, 'length');
-
-	stream.onValue(function(ev){
-		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
-	});
-
-	expected = 1;
-	map.fooList.push(1);
-
-	expected = 0;
-	map.fooList.pop();
-});
-
-
-test('Create a stream from a observable and event on property with shorthand method: toStream', function() {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map, '.fooList length');
-
-	stream.onValue(function(ev){
-		QUnit.equal(map.fooList.length, expected, 'Event stream was updated with length: ' + map.fooList.length);
-	});
-
-	expected = 1;
-	map.fooList.push(1);
-
-	expected = 0;
-	map.fooList.pop();
-});
-
-
-test('Update the list to undefined', function() {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map, '.fooList.length');
-
-	stream.onValue(function(newVal){
-		QUnit.equal(newVal, expected, 'Setting fooList to null');
-	});
-
-	expected = undefined;
-	map.fooList = null;
-});
-
-test('Update the list to a new DefineList instance', function() {
-	var expected = 0;
-	var MyMap = DefineMap.extend({
-		fooList: {
-			Type: DefineList.List,
-			value: []
-		}
-	});
-	var map = new MyMap();
-
-	var stream = canStream.toStream(map, '.fooList.length');
-
-	stream.onValue(function(newVal){
-		QUnit.equal(newVal, expected, 'Setting fooList to null');
-	});
-
-	expected = 0;
-	map.fooList = new DefineList([]);
-
-});
-
-test('Pass args back to event object when dispatch is called', function() {
-
-	var MyMap = DefineMap.extend({
-		foo: {
-			type: 'string',
-			value: 'bar'
-		}
-	});
-
-	var obs = new MyMap();
-	var stream1 = canStream.toStream(obs, 'foo');
-
-	stream1.onValue(function(ev){
-		QUnit.equal(ev.args.length, 2);
-	});
-
-	obs.dispatch('foo', ['myarg', 'myargs']);
-
-});
 
 test("toCompute(streamMaker) can-define-stream#17", function(){
 	var c = compute("a");
