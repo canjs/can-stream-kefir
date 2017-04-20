@@ -1,6 +1,7 @@
 var QUnit = require('steal-qunit');
 var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
+var DefineList = require('can-define/list/list');
 
 QUnit.module('can-stream-kefir');
 
@@ -134,4 +135,62 @@ test("setting test", function(){
 
 	// immediate value
 	QUnit.equal( c(), 5);
+});
+
+
+test('Stream on DefineList', function() {
+	var expectedLength;
+
+	var people = new DefineList([
+	  { first: "Justin", last: "Meyer" },
+	  { first: "Paula", last: "Strozak" }
+	]);
+
+
+
+	var stream = canStream.toStream(people, ".length");
+
+	expectedLength = 2;
+
+	stream.onValue(function(newLength) {
+		QUnit.equal(newLength, expectedLength, 'List size changed');
+	});
+
+	expectedLength = 3;
+	people.push({
+		first: 'Obaid',
+		last: 'Ahmed'
+	});
+
+	expectedLength = 2;
+	people.pop();
+});
+
+
+test('Computes with an initial value of undefined do not emit', function() {
+	var expectedLength;
+
+	var people = new DefineList([
+	  { first: "Justin", last: "Meyer" },
+	  { first: "Paula", last: "Strozak" }
+	]);
+
+
+
+	var stream = canStream.toStream(people, "length");
+
+	expectedLength = 2;
+
+	stream.onValue(function(event) {
+		QUnit.equal(event.args[0], expectedLength, 'List size changed');
+	});
+
+	expectedLength = 3;
+	people.push({
+		first: 'Obaid',
+		last: 'Ahmed'
+	});
+
+	expectedLength = 2;
+	people.pop();
 });

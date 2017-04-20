@@ -17,7 +17,11 @@ canStreamKefir.toStream = function (compute) {
 
 		compute.on('change', changeHandler);
 
-		emitter.emit(compute());
+		var currentValue = compute();
+		if(currentValue !== undefined) {
+			emitter.emit(currentValue);
+		}
+
 
 		return function () {
 			compute.off('change', changeHandler);
