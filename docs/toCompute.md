@@ -36,23 +36,19 @@ myCompute() //-> 1
 myCompute() //-> 2
 ```
 
-  @param {function(Stream):Stream} makeStream(setStream) A stream generator
-  function.  This function takes the stream of set values, and typically other streams
-  and manipulates them into the final returned output stream.  The output stream's
-  values are used as the value of the returned [can-compute.computed].
+@param {function(Stream):Stream} makeStream(setStream) A stream generator
+function.  This function takes the stream of set values, and typically other streams and manipulates them into the final returned output stream.  The output stream's values are used as the value of the returned [can-compute.computed].
 
-  The `setStream` is the stream of values set on the returned compute. In the following example, `setStream` will emit the values `1` and then `2`.
+The `setStream` is the stream of values set on the returned compute. In the following example, `setStream` will emit the values `1` and then `2`.
 
-  ```js
-  var returnedCompute = canStream.toCompute(function(setStream){
-   return setStream;
-  });
-  returnedCompute(1);
-  returnedCompute(2);
-  ```
+```js
+var returnedCompute = canStream.toCompute(function(setStream){
+ return setStream;
+});
+returnedCompute(1);
+returnedCompute(2);
+```
 
-  @param {Object} [context] An optional context which will be the `this` of `makeStream`.
+@param {Object} [context] An optional context which will be the `this` of `makeStream`.
 
-  @return {can-compute.computed} A compute that when read will return the value of
-  the stream returned by `setStream`.  When the compute is written to, it will
-  update `setStream`.
+@return {can-compute.computed} A compute that when read will return the value of the stream returned by `setStream`.  When the compute is written to, it will update `setStream`.
