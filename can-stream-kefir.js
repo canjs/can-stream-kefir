@@ -1,6 +1,5 @@
 var Kefir = require('kefir');
 var compute = require('can-compute');
-var makeArray = require("can-util/js/make-array/make-array");
 var canStream = require('can-stream');
 
 var canStreamKefir = {};
@@ -10,34 +9,20 @@ var canStreamKefir = {};
  * streams into a single stream. Assumes all arguments are computes and last
  * argument is optionally a function.
  */
-canStreamKefir.toStream = function () {
-	var computes = makeArray(arguments);
-	var callback;
-
-	if (computes[computes.length - 1].isComputed) {
-		callback = function () {
-			return arguments.length > 1 ? Kefir.merge(arguments) : arguments[0];
+canStreamKefir.toStream = function (compute) {
+	return Kefir.stream(function (emitter) {
+		var changeHandler = function (ev, newVal) {
+			emitter.emit(newVal);
 		};
-	} else {
-		callback = computes.pop();
-	}
 
-	var streams = computes.map(function(compute) {
-		return Kefir.stream(function (emitter) {
-			var changeHandler = function (ev, newVal) {
-				emitter.emit(newVal);
-			};
+		compute.on('change', changeHandler);
 
-			compute.on('change', changeHandler);
+		emitter.emit(compute());
 
-			emitter.emit(compute());
-
-			return function () {
-				compute.off('change', changeHandler);
-			};
-		});
+		return function () {
+			compute.off('change', changeHandler);
+		};
 	});
-	return callback.apply(this, streams);
 };
 
 

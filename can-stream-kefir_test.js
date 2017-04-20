@@ -39,9 +39,7 @@ test('Compute stream values can be piped into a compute', function () {
 	var c1 = compute(0);
 	var c2 = compute(0);
 
-	var resultCompute = canStream.toStream(c1, c2, function (s1, s2) {
-		return s1.merge(s2);
-	});
+	var resultCompute = canStream.toStream(c1).merge(  canStream.toStream(c2) );
 
 	resultCompute.onValue(function (val) {
 		QUnit.equal(val, expected);
@@ -64,9 +62,7 @@ test('Computed streams fire change events', function () {
 	var c1 = compute(expected);
 	var c2 = compute(expected);
 
-	var resultCompute = canStream.toStream(c1, c2, function (s1, s2) {
-		return s1.merge(s2);
-	});
+	var resultCompute = canStream.toStream(c1).merge(  canStream.toStream(c2) );
 
 	resultCompute.onValue(function (newVal) {
 		QUnit.equal(expected, newVal);
