@@ -34,7 +34,6 @@ test('Compute streams do not bind to the compute unless activated', function () 
 	QUnit.equal(c.computeInstance.__bindEvents._lifecycleBindings, 1);
 });
 
-
 test('Compute stream values can be piped into a compute', function () {
 	var expected = 0;
 	var c1 = compute(0);
@@ -55,8 +54,6 @@ test('Compute stream values can be piped into a compute', function () {
 	expected = 3;
 	c1(3);
 });
-
-
 
 test('Computed streams fire change events', function () {
 	var expected = 0;
@@ -79,10 +76,6 @@ test('Computed streams fire change events', function () {
 	c1(expected);
 });
 
-
-
-
-
 test('Create a stream from a compute with shorthand method: toStream', function() {
 	var expected = 0;
 	var c1 = compute(0);
@@ -98,7 +91,19 @@ test('Create a stream from a compute with shorthand method: toStream', function(
 
 });
 
+test('Create a stream using main function export', function() {
+	var expected = 0;
+	var c1 = compute(0);
+	
+	var stream = canStream(c1);
 
+	stream.onValue(function(newVal) {
+		QUnit.equal(newVal, expected);
+	});
+
+	expected = 1;
+	c1(1);
+});
 
 test("toCompute(streamMaker) can-define-stream#17", function(){
 	var c = compute("a");
@@ -137,7 +142,6 @@ test("setting test", function(){
 	QUnit.equal( c(), 5);
 });
 
-
 test('Stream on DefineList', function() {
 	var expectedLength;
 
@@ -145,8 +149,6 @@ test('Stream on DefineList', function() {
 	  { first: "Justin", last: "Meyer" },
 	  { first: "Paula", last: "Strozak" }
 	]);
-
-
 
 	var stream = canStream.toStream(people, ".length");
 
@@ -174,8 +176,6 @@ test('Computes with an initial value of undefined do not emit', function() {
 	  { first: "Justin", last: "Meyer" },
 	  { first: "Paula", last: "Strozak" }
 	]);
-
-
 
 	var stream = canStream.toStream(people, "length");
 
