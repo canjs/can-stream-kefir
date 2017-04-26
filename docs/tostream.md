@@ -39,7 +39,7 @@ events.
 
   var hobbies = new DefineList(["js","kayaking"]);
 
-  var changeCount = canStream.toStream(hobbies, "length").scan(function(prev){
+  var changeCount = canStream(hobbies, "length").scan(function(prev){
 	  return prev + 1;
   }, 0);
   changeCount.onValue(function(event) {
@@ -66,25 +66,26 @@ events.
   ```js
   var canStream = require('can-stream-kefir');
   var DefineMap = require("can-define/map/map");
+	var Kefir = require('kefir');
 
   var person = new DefineMap({
-      first: "Justin",
+		first: "Justin",
 	  last: "Meyer"
   });
 
-  var first = canStream.toStream(person, '.first'),
-      last = canStream.toStream(person, '.last');
+  var first = canStream(person, '.first'),
+      last = canStream(person, '.last');
 
-  var fullName = Kefir.combine(first, last, function(first, last){
+  var fullName = Kefir.combine([first, last], function(first, last){
 	  return first + last;
   });
 
   fullName.onValue(function(newVal){
-      console.log(newVal);
+      console.log(newVal); // -> console.logs 'Justin Meyer'
   });
 
   map.first = "Payal"
-  //-> console.logs "Payal Meyer"
+  // -> console.logs "Payal Meyer"
   ```
 
   Create a stream based on a event on an observable property.
@@ -108,7 +109,7 @@ events.
       todos: ["mow lawn"]
   });
 
-  var addStream = canStream.toStream(me, ".todos add");
+  var addStream = canStream(me, ".todos add");
 
   addStream.onValue(function(event){
       console.log(event);
