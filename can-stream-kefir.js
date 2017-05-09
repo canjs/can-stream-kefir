@@ -85,4 +85,7 @@ canStreamKefir.toCompute = function(makeStream, context){
 /*
  * Exposes a simple toStream method that takes an observable and event or propname and returns a Kefir stream object
  */
-module.exports = canStream(canStreamKefir);
+var streamObj = canStream(canStreamKefir);
+module.exports = streamObj.toStream;
+module.exports.toStream = streamObj.toStream;
+module.exports.toCompute = streamObj.toCompute;
