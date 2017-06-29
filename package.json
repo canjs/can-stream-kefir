@@ -42,7 +42,7 @@
     "kefir": "^3.7.2"
   },
   "devDependencies": {
-    "can-define": "^1.2.0",
+    "can-define": "^1.2.3",
     "done-serve": "^0.2.4",
     "donejs-cli": "^0.9.5",
     "generator-donejs": "^0.9.0",
