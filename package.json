@@ -34,12 +34,12 @@
     ]
   },
   "dependencies": {
-    "can-compute": "^3.2.0",
+    "can-compute": "^3.1.0",
     "can-event": "^3.5.0",
     "can-observation": "^3.2.0",
     "can-stream": "^0.3.0",
     "can-util": "^3.9.0",
-    "kefir": "^3.7.2"
+    "kefir": "^3.5.1"
   },
   "devDependencies": {
     "can-define": "^1.2.3",
