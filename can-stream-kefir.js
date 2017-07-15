@@ -1,6 +1,8 @@
 var Kefir = require('kefir');
 var compute = require('can-compute');
 var canStream = require('can-stream');
+var canSymbol = require('can-symbol');
+var canReflect = require('can-reflect');
 
 var canStreamKefir = {};
 
@@ -22,16 +24,13 @@ canStreamKefir.toStream = function (compute) {
 			emitter.emit(currentValue);
 		}
 
-
 		return function () {
 			compute.off('change', changeHandler);
 		};
 	});
 };
 
-
 canStreamKefir.toCompute = function(makeStream, context){
-
 	var emitter,
 		lastValue,
 		streamHandler,
@@ -42,10 +41,8 @@ canStreamKefir.toCompute = function(makeStream, context){
 		if(lastSetValue !== undefined) {
 			emitter.emit(lastSetValue);
 		}
-
 	}),
 		valueStream = makeStream.call(context, setterStream);
-
 
 	// Create a compute that will bind to the resolved stream when bound
 	return compute(undefined, {
@@ -65,7 +62,6 @@ canStreamKefir.toCompute = function(makeStream, context){
 
 		// When the compute is bound, bind to the resolved stream
 		on: function (updated) {
-
 			// When the stream passes a new values, save a reference to it and call
 			// the compute's internal `updated` method (which ultimately calls `get`)
 			streamHandler = function (val) {
@@ -81,6 +77,24 @@ canStreamKefir.toCompute = function(makeStream, context){
 		}
 	});
 };
+
+/*
+ * add symbols to Kefir.observable.prototype so streams can be used directly by can-reflect
+ */
+var streamProto = Kefir.Observable.prototype;
+canReflect.set(streamProto, canSymbol.for('can.getValue'), function() {
+  var stream = this;
+  var compute = canStreamKefir.toCompute(function() {
+    return stream;
+  });
+  return compute();
+});
+
+canReflect.set(streamProto, canSymbol.for('can.onValue'), function() {
+});
+
+canReflect.set(streamProto, canSymbol.for('can.offValue'), function() {
+});
 
 /*
  * Exposes a simple toStream method that takes an observable and event or propname and returns a Kefir stream object

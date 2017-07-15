@@ -28,21 +28,19 @@
     "canjs-plugin",
     "donejs"
   ],
-  "steal": {
-    "configDependencies": [
-      "live-reload"
-    ]
-  },
   "dependencies": {
     "can-compute": "^3.1.0",
     "can-event": "^3.5.0",
     "can-observation": "^3.2.0",
+    "can-reflect": "^1.2.3",
     "can-stream": "^0.3.0",
+    "can-symbol": "^1.0.0",
     "can-util": "^3.9.0",
     "kefir": "^3.5.1"
   },
   "devDependencies": {
     "can-define": "^1.2.3",
+    "can-stache": "^3.3.0",
     "done-serve": "^1.3.0",
     "donejs-cli": "^1.0.1",
     "generator-donejs": "^1.0.5",
