@@ -1,13 +1,18 @@
 var QUnit = require('steal-qunit');
-var canStream = require('can-stream-kefir');
+
 var compute = require('can-compute');
 var DefineList = require('can-define/list/list');
+
+var canStream = require('can-stream');
+var canStreamKefir = require('can-stream-kefir');
+var Stream = canStream(canStreamKefir);
+
 
 QUnit.module('can-stream-kefir');
 
 test('Compute changes can be streamed', function () {
 	var c = compute(0);
-	var stream = canStream.toStream(c);
+	var stream = Stream.toStream(c);
 	var computeVal;
 
 	stream.onValue(function (newVal) {
