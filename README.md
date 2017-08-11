@@ -1,6 +1,28 @@
-Convert one or more [can-compute]s into a stream, multiple computes into a single compute, or
-multiple computes into a single stream. [Kefir](https://rpominov.github.io/kefir/) is used internally
-to provide the stream functionality.
+# can-stream-kefir
 
-
+[![Join the chat at https://gitter.im/canjs/canjs](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/canjs/canjs?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/canjs/can-stream-kefir/blob/master/LICENSE)
+[![npm version](https://badge.fury.io/js/can-stream-kefir.svg)](https://www.npmjs.com/package/can-stream-kefir)
+[![Travis build status](https://travis-ci.org/canjs/can-stream-kefir.svg?branch=master)](https://travis-ci.org/canjs/can-stream-kefir)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/canjs/can-stream-kefir?branch=master&svg=true)](https://ci.appveyor.com/project/matthewp/can-stream-kefir)
+[![Coverage status](https://coveralls.io/repos/github/canjs/can-stream-kefir/badge.svg?branch=master)](https://coveralls.io/github/canjs/can-stream-kefir?branch=master)
 [![Greenkeeper badge](https://badges.greenkeeper.io/canjs/can-stream-kefir.svg)](https://greenkeeper.io/)
+
+FAILED TO GET DESCRIPTION
+
+## Documentation
+
+Read the [API docs on CanJS.com](https://canjs.com/doc/can-stream-kefir.html).
+
+## Changelog
+
+See the [latest releases on GitHub](https://github.com/canjs/can-stream-kefir/releases).
+
+## Contributing
+
+The [contribution guide](https://github.com/canjs/can-stream-kefir/blob/master/CONTRIBUTING.md) has information on getting help, reporting bugs, developing locally, and more.
+
+## License
+
+[MIT](https://github.com/canjs/can-stream-kefir/blob/master/LICENSE.md)
+
