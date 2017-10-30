@@ -1,5 +1,6 @@
 @module {Object} can-stream-kefir can-stream-kefir
-@parent can-ecosystem
+@parent can-observables
+@collection can-ecosystem
 @group can-stream-kefir.fns 2 Methods
 @package ../package.json
 
