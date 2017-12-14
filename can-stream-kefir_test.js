@@ -26,14 +26,14 @@ test('Compute changes can be streamed', function () {
 	QUnit.equal(computeVal, 3);
 });
 
-test('Compute streams do not bind to the compute unless activated', function () {
+QUnit.test('Compute streams do not bind to the compute unless activated', function(assert) {
 	var c = compute(0);
 	var stream = canStream.toStream(c);
-	QUnit.equal(c.computeInstance.__bindEvents, undefined);
-	stream.onValue(function () {});
-	QUnit.equal(c.computeInstance.__bindEvents._lifecycleBindings, 1);
-});
+	assert.notOk(c.computeInstance.bound, "should not be bound");
 
+	stream.onValue(function() {});
+	assert.ok(c.computeInstance.bound, "should be bound");
+});
 
 test('Compute stream values can be piped into a compute', function () {
 	var expected = 0;
