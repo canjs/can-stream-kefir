@@ -1,6 +1,7 @@
 var QUnit = require('steal-qunit');
 var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
+var canReflect = require('can-reflect');
 var DefineList = require('can-define/list/list');
 
 QUnit.module('can-stream-kefir');
@@ -193,4 +194,32 @@ test('Computes with an initial value of undefined do not emit', function() {
 
 	expectedLength = 2;
 	people.pop();
+});
+
+QUnit.test('getValueDependencies - stream from compute', function(assert) {
+	var c = compute(0);
+	var stream = canStream.toStream(c);
+
+	assert.deepEqual(canReflect.getValueDependencies(stream), {
+		valueDependencies: new Set([c])
+	});
+});
+
+QUnit.test('getValueDependencies - streamedCompute', function(assert) {
+	var mergeStream;
+	var c = compute("a");
+	var letterStream = canStream.toStream(c);
+
+	var makeStream = function makeStream(setStream){
+		return (mergeStream = setStream.merge(letterStream));
+	};
+
+	var streamedCompute = canStream.toCompute(makeStream);
+
+	assert.deepEqual(
+		canReflect.getKeyDependencies(streamedCompute.computeInstance, "change"),
+		{
+			valueDependencies: new Set([ mergeStream ])
+		}
+	);
 });
