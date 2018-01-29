@@ -1,6 +1,7 @@
 var QUnit = require('steal-qunit');
 var canStream = require('can-stream-kefir');
 var compute = require('can-compute');
+var canReflect = require('can-reflect');
 var DefineList = require('can-define/list/list');
 
 QUnit.module('can-stream-kefir');
@@ -26,14 +27,14 @@ test('Compute changes can be streamed', function () {
 	QUnit.equal(computeVal, 3);
 });
 
-test('Compute streams do not bind to the compute unless activated', function () {
+QUnit.test('Compute streams do not bind to the compute unless activated', function(assert) {
 	var c = compute(0);
 	var stream = canStream.toStream(c);
-	QUnit.equal(c.computeInstance.__bindEvents, undefined);
-	stream.onValue(function () {});
-	QUnit.equal(c.computeInstance.__bindEvents._lifecycleBindings, 1);
-});
+	assert.notOk(c.computeInstance.bound, "should not be bound");
 
+	stream.onValue(function() {});
+	assert.ok(c.computeInstance.bound, "should be bound");
+});
 
 test('Compute stream values can be piped into a compute', function () {
 	var expected = 0;
@@ -193,4 +194,32 @@ test('Computes with an initial value of undefined do not emit', function() {
 
 	expectedLength = 2;
 	people.pop();
+});
+
+QUnit.test('getValueDependencies - stream from compute', function(assert) {
+	var c = compute(0);
+	var stream = canStream.toStream(c);
+
+	assert.deepEqual(canReflect.getValueDependencies(stream), {
+		valueDependencies: new Set([c])
+	});
+});
+
+QUnit.test('getValueDependencies - streamedCompute', function(assert) {
+	var mergeStream;
+	var c = compute("a");
+	var letterStream = canStream.toStream(c);
+
+	var makeStream = function makeStream(setStream){
+		return (mergeStream = setStream.merge(letterStream));
+	};
+
+	var streamedCompute = canStream.toCompute(makeStream);
+
+	assert.deepEqual(
+		canReflect.getKeyDependencies(streamedCompute.computeInstance, "change"),
+		{
+			valueDependencies: new Set([ mergeStream ])
+		}
+	);
 });

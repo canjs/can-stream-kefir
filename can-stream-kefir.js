@@ -1,7 +1,12 @@
-var Kefir = require('kefir');
+var Kefir = require('can-kefir');
 var compute = require('can-compute');
 var canStream = require('can-stream');
+var canSymbol = require('can-symbol');
 var namespace = require('can-namespace');
+
+var getValueDependenciesSymbol = canSymbol.for('can.getValueDependencies');
+var getKeyDependenciesSymbol = canSymbol.for('can.getKeyDependencies');
+
 var canStreamKefir = {};
 
 /*
@@ -10,7 +15,7 @@ var canStreamKefir = {};
  * argument is optionally a function.
  */
 canStreamKefir.toStream = function (compute) {
-	return Kefir.stream(function (emitter) {
+	var stream = Kefir.stream(function (emitter) {
 		var changeHandler = function (ev, newVal) {
 			emitter.emit(newVal);
 		};
@@ -22,16 +27,21 @@ canStreamKefir.toStream = function (compute) {
 			emitter.emit(currentValue);
 		}
 
-
 		return function () {
 			compute.off('change', changeHandler);
 		};
 	});
+
+	stream[getValueDependenciesSymbol] = function getValueDependencies() {
+		return {
+			valueDependencies: new Set([compute])
+		};
+	};
+
+	return stream;
 };
 
-
 canStreamKefir.toCompute = function(makeStream, context){
-
 	var emitter,
 		lastValue,
 		streamHandler,
@@ -39,17 +49,14 @@ canStreamKefir.toCompute = function(makeStream, context){
 
 	var setterStream = Kefir.stream(function (e) {
 		emitter = e;
-		if(lastSetValue !== undefined) {
+		if (lastSetValue !== undefined) {
 			emitter.emit(lastSetValue);
 		}
-
-	}),
-		valueStream = makeStream.call(context, setterStream);
-
+	});
+	var valueStream = makeStream.call(context, setterStream);
 
 	// Create a compute that will bind to the resolved stream when bound
-	return compute(undefined, {
-
+	var streamCompute = compute(undefined, {
 		// When the compute is read, use that last value
 		get: function () {
 			return lastValue;
@@ -80,6 +87,19 @@ canStreamKefir.toCompute = function(makeStream, context){
 			valueStream.offValue(streamHandler);
 		}
 	});
+
+	// the symbol should ideally be implemented in the compute wrapper instead of
+	// the internal instance, this should be fixed once can-compute is removed
+	var _compute = streamCompute.computeInstance;
+	_compute[getKeyDependenciesSymbol] = function getKeyDependencies(key) {
+		if (key === 'change') {
+			return {
+				valueDependencies: new Set([valueStream])
+			};
+		}
+	};
+
+	return streamCompute;
 };
 
 if (!namespace.streamKefir) {
