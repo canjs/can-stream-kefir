@@ -11,20 +11,20 @@
   The `can-stream-kefir` module exports methods useful for converting observable values like [can-compute]s
   or [can-define/map/map] properties into streams.
 
-  ```javascript
-  import canStream from "can-stream-kefir";
-  import DefineMap from "can-define/map/map";
+  ```js
+import canStream from "can-stream-kefir";
+import DefineMap from "can-define/map/map";
 
-  const me = new DefineMap({name: "Justin"});
+const me = new DefineMap({name: "Justin"});
 
-  const nameStream = canStream.toStream(me,".name");
+const nameStream = canStream.toStream(me,".name");
 
 
-  nameStream.onValue(function(name){
-    // name -> "Obaid";
-  });
+nameStream.onValue(function(name){
+	// name -> "Obaid";
+});
 
-  me.name = "Obaid";
+me.name = "Obaid";
   ```
 
 @body
@@ -43,7 +43,7 @@ For example:
 
 __Converting a compute to a stream__
 
-```javascript
+```js
 import canCompute from "can-compute";
 import canStream from "can-stream-kefir";
 
@@ -51,7 +51,7 @@ const compute = canCompute(0);
 const stream = canStream.toStream(compute);
 
 stream.onValue(function(newVal){
-  console.log(newVal);
+	console.log(newVal);
 });
 
 compute(1);
