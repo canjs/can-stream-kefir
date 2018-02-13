@@ -9,13 +9,13 @@ events.
 
   Creates a stream from a [can-compute] compute. This stream gets updated whenever the compute value changes.
 
-  ```js
-  var compute = require('can-compute');
-  var canStream = require('can-stream-kefir');
+  ```javascript
+  import compute from 'can-compute';
+  import canStream from 'can-stream-kefir';
 
-  var c1 = compute(0);
+  const c1 = compute(0);
 
-  var resultCompute = canStream.toStream(c1);
+  const resultCompute = canStream.toStream(c1);
 
   resultCompute.onValue(function (val) {
     console.log(val);
@@ -33,14 +33,14 @@ events.
   Creates an event stream with the event objects dispatched on `obs` for `eventName`.
   This is a shorthand for [can-stream-kefir.toStreamFromEvent].
 
-  ```js
-  var DefineList = require('can-define/list/list');
-  var canStream = require('can-stream-kefir');
+  ```javascript
+  import DefineList from 'can-define/list/list';
+  import canStream from 'can-stream-kefir';
 
-  var hobbies = new DefineList(["js","kayaking"]);
+  const hobbies = new DefineList(["js","kayaking"]);
 
-  var changeCount = canStream.toStream(hobbies, "length").scan(function(prev){
-	  return prev + 1;
+  const changeCount = canStream.toStream(hobbies, "length").scan(function(prev){
+    return prev + 1;
   }, 0);
   changeCount.onValue(function(event) {
       console.log(event);
@@ -63,20 +63,19 @@ events.
 
   Creates a stream from an observable property value. This is a shorthand for [can-stream-kefir.toStreamFromProperty].
 
-  ```js
-  var canStream = require('can-stream-kefir');
-  var DefineMap = require("can-define/map/map");
+  ```javascript
+  import canStream from 'can-stream-kefir';
+  import DefineMap from "can-define/map/map";
 
-  var person = new DefineMap({
+  const person = new DefineMap({
       first: "Justin",
-	  last: "Meyer"
+    last: "Meyer"
   });
 
-  var first = canStream.toStream(person, '.first'),
-      last = canStream.toStream(person, '.last');
+  const first = canStream.toStream(person, '.first'), last = canStream.toStream(person, '.last');
 
-  var fullName = Kefir.combine(first, last, function(first, last){
-	  return first + last;
+  const fullName = Kefir.combine(first, last, function(first, last){
+    return first + last;
   });
 
   fullName.onValue(function(newVal){
@@ -99,16 +98,16 @@ events.
 
   Creates a stream from an observable property value. This is a shorthand for the second signature of [can-stream-kefir.toStreamFromEvent].
 
-  ```js
-  var canStream = require('can-stream-kefir');
-  var DefineMap = require("can-define/map/map");
-  var DefineList = require("can-define/list/list");
+  ```javascript
+  import canStream from 'can-stream-kefir';
+  import DefineMap from "can-define/map/map";
+  import DefineList from "can-define/list/list";
 
-  var me = new DefineMap({
+  const me = new DefineMap({
       todos: ["mow lawn"]
   });
 
-  var addStream = canStream.toStream(me, ".todos add");
+  const addStream = canStream.toStream(me, ".todos add");
 
   addStream.onValue(function(event){
       console.log(event);

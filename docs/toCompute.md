@@ -14,11 +14,11 @@ is called with:
 
 This is used to create computes from streams.  
 
-```js
-var count = Kefir.sequentially(1000, [1, 2]);
+```javascript
+const count = Kefir.sequentially(1000, [1, 2]);
 
-var myCompute = canStream.toCompute(function(setStream){
-	return setStream.merge(count);
+const myCompute = canStream.toCompute(function(setStream){
+  return setStream.merge(count);
 });
 
 // listen to the compute for it to have a value
@@ -41,8 +41,8 @@ function.  This function takes the stream of set values, and typically other str
 
 The `setStream` is the stream of values set on the returned compute. In the following example, `setStream` will emit the values `1` and then `2`.
 
-```js
-var returnedCompute = canStream.toCompute(function(setStream){
+```javascript
+const returnedCompute = canStream.toCompute(function(setStream){
  return setStream;
 });
 returnedCompute(1);
