@@ -10,19 +10,19 @@ events.
   Creates a stream from a [can-compute] compute. This stream gets updated whenever the compute value changes.
 
   ```js
-import compute from 'can-compute';
-import canStream from 'can-stream-kefir';
+import compute from "can-compute";
+import canStream from "can-stream-kefir";
 
-const c1 = compute(0);
+const c1 = compute( 0 );
 
-const resultCompute = canStream.toStream(c1);
+const resultCompute = canStream.toStream( c1 );
 
-resultCompute.onValue(function (val) {
-	console.log(val);
-});
+resultCompute.onValue( function( val ) {
+	console.log( val );
+} );
 
-c1(1);
-  ```
+c1( 1 );
+```
 
   @param {can-compute} compute A compute whose value will be the stream values.
 
@@ -34,23 +34,25 @@ c1(1);
   This is a shorthand for [can-stream-kefir.toStreamFromEvent].
 
   ```js
-import DefineList from 'can-define/list/list';
-import canStream from 'can-stream-kefir';
+import DefineList from "can-define/list/list";
+import canStream from "can-stream-kefir";
 
-const hobbies = new DefineList(["js","kayaking"]);
+const hobbies = new DefineList( [ "js", "kayaking" ] );
 
-const changeCount = canStream.toStream(hobbies, "length").scan(function(prev){
+const changeCount = canStream.toStream( hobbies, "length" ).scan( function( prev ) {
 	return prev + 1;
-}, 0);
-changeCount.onValue(function(event) {
-	console.log(event);
-});
+}, 0 );
+changeCount.onValue( function( event ) {
+	console.log( event );
+} );
 
-hobbies.push("bball")
+hobbies.push( "bball" );
+
 //-> console.logs {type: "add", args: [2,["bball"]]}
-hobbies.shift()
+hobbies.shift();
+
 //-> console.logs {type: "remove", args: [0,["js"]]}
-  ```
+```
 
   @param {Observable} obs An observable object like a [can-define/map/map].
   Promises can work too.
@@ -64,27 +66,28 @@ hobbies.shift()
   Creates a stream from an observable property value. This is a shorthand for [can-stream-kefir.toStreamFromProperty].
 
   ```js
-import canStream from 'can-stream-kefir';
+import canStream from "can-stream-kefir";
 import DefineMap from "can-define/map/map";
 
-const person = new DefineMap({
+const person = new DefineMap( {
 	first: "Justin",
 	last: "Meyer"
-});
+} );
 
-const first = canStream.toStream(person, '.first'), last = canStream.toStream(person, '.last');
+const first = canStream.toStream( person, ".first" ), last = canStream.toStream( person, ".last" );
 
-const fullName = Kefir.combine(first, last, function(first, last){
+const fullName = Kefir.combine( first, last, function( first, last ) {
 	return first + last;
-});
+} );
 
-fullName.onValue(function(newVal){
-	console.log(newVal);
-});
+fullName.onValue( function( newVal ) {
+	console.log( newVal );
+} );
 
-map.first = "Payal"
+map.first = "Payal";
+
 //-> console.logs "Payal Meyer"
-  ```
+```
 
   Create a stream based on a event on an observable property.
 
@@ -99,23 +102,24 @@ map.first = "Payal"
   Creates a stream from an observable property value. This is a shorthand for the second signature of [can-stream-kefir.toStreamFromEvent].
 
   ```js
-import canStream from 'can-stream-kefir';
+import canStream from "can-stream-kefir";
 import DefineMap from "can-define/map/map";
 import DefineList from "can-define/list/list";
 
-const me = new DefineMap({
-	todos: ["mow lawn"]
-});
+const me = new DefineMap( {
+	todos: [ "mow lawn" ]
+} );
 
-const addStream = canStream.toStream(me, ".todos add");
+const addStream = canStream.toStream( me, ".todos add" );
 
-addStream.onValue(function(event){
-	console.log(event);
-});
+addStream.onValue( function( event ) {
+	console.log( event );
+} );
 
-map.todos.push("do dishes");
+map.todos.push( "do dishes" );
+
 //-> console.logs {type: "add", args: [1,["do dishes"]]}
-  ```
+```
 
   Create a stream based on a event on an observable property.
 
