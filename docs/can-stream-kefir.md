@@ -12,20 +12,21 @@
   or [can-define/map/map] properties into streams.
 
   ```js
-  var canStream = require("can-stream-kefir");
-  var DefineMap = require("can-define/map/map");
+import canStream from "can-stream-kefir";
+import DefineMap from "can-define/map/map";
 
-  var me = new DefineMap({name: "Justin"});
+const me = new DefineMap( { name: "Justin" } );
 
-  var nameStream = canStream.toStream(me,".name");
+const nameStream = canStream.toStream( me, ".name" );
 
 
-  nameStream.onValue(function(name){
-	  // name -> "Obaid";
-  });
+nameStream.onValue( function( name ) {
 
-  me.name = "Obaid";
-  ```
+	// name -> "Obaid";
+} );
+
+me.name = "Obaid";
+```
 
 @body
 
@@ -44,16 +45,17 @@ For example:
 __Converting a compute to a stream__
 
 ```js
-var canCompute = require("can-compute");
-var canStream = require("can-stream-kefir");
+import canCompute from "can-compute";
+import canStream from "can-stream-kefir";
 
-var compute = canCompute(0);
-var stream = canStream.toStream(compute);
+const compute = canCompute( 0 );
+const stream = canStream.toStream( compute );
 
-stream.onValue(function(newVal){
-	console.log(newVal);
-});
+stream.onValue( function( newVal ) {
+	console.log( newVal );
+} );
 
-compute(1);
+compute( 1 );
+
 //-> console.logs 1
 ```

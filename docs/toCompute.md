@@ -15,25 +15,25 @@ is called with:
 This is used to create computes from streams.  
 
 ```js
-var count = Kefir.sequentially(1000, [1, 2]);
+const count = Kefir.sequentially( 1000, [ 1, 2 ] );
 
-var myCompute = canStream.toCompute(function(setStream){
-	return setStream.merge(count);
-});
+const myCompute = canStream.toCompute( function( setStream ) {
+	return setStream.merge( count );
+} );
 
 // listen to the compute for it to have a value
-myCompute.on("change", function(){})
+myCompute.on( "change", function() {} );
 
-myCompute("A")
+myCompute( "A" );
 
 // immediate value
-myCompute() //-> "A"
+myCompute(); //-> "A"
 
 // 1000ms later
-myCompute() //-> 1
+myCompute(); //-> 1
 
 // 1000ms later
-myCompute() //-> 2
+myCompute(); //-> 2
 ```
 
 @param {function(Stream):Stream} makeStream(setStream) A stream generator
@@ -42,11 +42,11 @@ function.  This function takes the stream of set values, and typically other str
 The `setStream` is the stream of values set on the returned compute. In the following example, `setStream` will emit the values `1` and then `2`.
 
 ```js
-var returnedCompute = canStream.toCompute(function(setStream){
- return setStream;
-});
-returnedCompute(1);
-returnedCompute(2);
+const returnedCompute = canStream.toCompute( function( setStream ) {
+	return setStream;
+} );
+returnedCompute( 1 );
+returnedCompute( 2 );
 ```
 
 @param {Object} [context] An optional context which will be the `this` of `makeStream`.
