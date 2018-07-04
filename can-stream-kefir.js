@@ -1,3 +1,4 @@
+"use strict";
 var Kefir = require('can-kefir');
 var compute = require('can-compute');
 var canStream = require('can-stream');
