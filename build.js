@@ -9,7 +9,7 @@ stealTools.export({
 		"+amd": {},
 		"+standalone": {
 			exports: {
-				"can-util/namespace": "can"
+				"can-namespace": "can"
 			}
 		}
 	}
