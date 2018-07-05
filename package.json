@@ -1,6 +1,6 @@
 {
   "name": "can-stream-kefir",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Stream values into and out of computes",
   "homepage": "http://canjs.com",
   "author": {
