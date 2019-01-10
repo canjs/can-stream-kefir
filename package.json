@@ -43,7 +43,7 @@
     "can-symbol": "^1.5.0"
   },
   "devDependencies": {
-    "can-define": "^2.0.0",
+    "can-define": "^2.7.9",
     "can-reflect": "^1.11.1",
     "detect-cyclic-packages": "^1.1.0",
     "done-serve": "^3.0.0",
