@@ -51,7 +51,7 @@
     "steal": "^1.5.4",
     "steal-qunit": "^2.0.0",
     "steal-tools": "^1.3.6",
-    "testee": "^0.8.0"
+    "testee": "^0.9.0"
   },
   "repository": {
     "type": "git",
