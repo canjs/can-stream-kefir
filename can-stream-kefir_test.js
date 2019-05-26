@@ -6,7 +6,7 @@ var DefineList = require('can-define/list/list');
 
 QUnit.module('can-stream-kefir');
 
-test('Compute changes can be streamed', function () {
+QUnit.test('Compute changes can be streamed', function(assert) {
 	var c = compute(0);
 	var stream = canStream.toStream(c);
 	var computeVal;
@@ -15,16 +15,16 @@ test('Compute changes can be streamed', function () {
 		computeVal = newVal;
 	});
 
-	QUnit.equal(computeVal, 0);
+	assert.equal(computeVal, 0);
 	c(1);
 
-	QUnit.equal(computeVal, 1);
+	assert.equal(computeVal, 1);
 	c(2);
 
-	QUnit.equal(computeVal, 2);
+	assert.equal(computeVal, 2);
 	c(3);
 
-	QUnit.equal(computeVal, 3);
+	assert.equal(computeVal, 3);
 });
 
 QUnit.test('Compute streams do not bind to the compute unless activated', function(assert) {
@@ -36,7 +36,7 @@ QUnit.test('Compute streams do not bind to the compute unless activated', functi
 	assert.ok(c.computeInstance.bound, "should be bound");
 });
 
-test('Compute stream values can be piped into a compute', function () {
+QUnit.test('Compute stream values can be piped into a compute', function(assert) {
 	var expected = 0;
 	var c1 = compute(0);
 	var c2 = compute(0);
@@ -44,7 +44,7 @@ test('Compute stream values can be piped into a compute', function () {
 	var resultCompute = canStream.toStream(c1).merge(  canStream.toStream(c2) );
 
 	resultCompute.onValue(function (val) {
-		QUnit.equal(val, expected);
+		assert.equal(val, expected);
 	});
 
 	expected = 1;
@@ -59,7 +59,7 @@ test('Compute stream values can be piped into a compute', function () {
 
 
 
-test('Computed streams fire change events', function () {
+QUnit.test('Computed streams fire change events', function(assert) {
 	var expected = 0;
 	var c1 = compute(expected);
 	var c2 = compute(expected);
@@ -67,7 +67,7 @@ test('Computed streams fire change events', function () {
 	var resultCompute = canStream.toStream(c1).merge(  canStream.toStream(c2) );
 
 	resultCompute.onValue(function (newVal) {
-		QUnit.equal(expected, newVal);
+		assert.equal(expected, newVal);
 	});
 
 	expected = 1;
@@ -84,14 +84,14 @@ test('Computed streams fire change events', function () {
 
 
 
-test('Create a stream from a compute with shorthand method: toStream', function() {
+QUnit.test('Create a stream from a compute with shorthand method: toStream', function(assert) {
 	var expected = 0;
 	var c1 = compute(0);
 
 	var resultCompute = canStream.toStream(c1);
 
 	resultCompute.onValue(function (val) {
-		QUnit.equal(val, expected);
+		assert.equal(val, expected);
 	});
 
 	expected = 1;
@@ -101,7 +101,7 @@ test('Create a stream from a compute with shorthand method: toStream', function(
 
 
 
-test("toCompute(streamMaker) can-define-stream#17", function(){
+QUnit.test("toCompute(streamMaker) can-define-stream#17", function(assert) {
 	var c = compute("a");
 	var letterStream = canStream.toStream(c);
 
@@ -113,18 +113,18 @@ test("toCompute(streamMaker) can-define-stream#17", function(){
 
 	});
 
-	QUnit.deepEqual( streamedCompute(), "a" );
+	assert.deepEqual( streamedCompute(), "a" );
 
 	c(1);
 
-	QUnit.deepEqual( streamedCompute(), 1 );
+	assert.deepEqual( streamedCompute(), 1 );
 
 	c("b");
 
-	QUnit.deepEqual( streamedCompute(), "b" );
+	assert.deepEqual( streamedCompute(), "b" );
 });
 
-test("setting test", function(){
+QUnit.test("setting test", function(assert) {
 
 	var c = canStream.toCompute(function(setStream){
 		return setStream;
@@ -135,11 +135,11 @@ test("setting test", function(){
 	c.on("change", function(){});
 
 	// immediate value
-	QUnit.equal( c(), 5);
+	assert.equal( c(), 5);
 });
 
 
-test('Stream on DefineList', function() {
+QUnit.test('Stream on DefineList', function(assert) {
 	var expectedLength;
 
 	var people = new DefineList([
@@ -154,7 +154,7 @@ test('Stream on DefineList', function() {
 	expectedLength = 2;
 
 	stream.onValue(function(newLength) {
-		QUnit.equal(newLength, expectedLength, 'List size changed');
+		assert.equal(newLength, expectedLength, 'List size changed');
 	});
 
 	expectedLength = 3;
@@ -168,7 +168,7 @@ test('Stream on DefineList', function() {
 });
 
 
-test('Computes with an initial value of undefined do not emit', function() {
+QUnit.test('Computes with an initial value of undefined do not emit', function(assert) {
 	var expectedLength;
 
 	var people = new DefineList([
@@ -183,7 +183,7 @@ test('Computes with an initial value of undefined do not emit', function() {
 	expectedLength = 2;
 
 	stream.onValue(function(event) {
-		QUnit.equal(event.args[0], expectedLength, 'List size changed');
+		assert.equal(event.args[0], expectedLength, 'List size changed');
 	});
 
 	expectedLength = 3;
