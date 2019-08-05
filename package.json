@@ -38,7 +38,7 @@
     "can-compute": "^4.0.0",
     "can-kefir": "^1.0.0",
     "can-namespace": "^1.0.0",
-    "can-observation": "^4.0.0",
+    "can-observation": "^4.2.0",
     "can-stream": "^1.0.0",
     "can-symbol": "^1.5.0"
   },
